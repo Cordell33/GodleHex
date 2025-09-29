@@ -1,4 +1,182 @@
-e02d2d;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GödleHex</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: #121212; 
+      color: #eee; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      padding: 2rem;
+      margin: 0;
+      min-height: 100vh;
+    }
+    h1 { 
+      font-size: 2.8rem; 
+      margin-bottom: 1rem; 
+      color: #ff3b3b; /* red accent instead of blue */
+      text-shadow: 0 0 10px rgba(255, 59, 59, 0.5);
+    }
+    .game-area { 
+      display: flex; 
+      align-items: flex-start; 
+      gap: 2rem; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      margin: 1rem 0;
+    }
+    .questions { 
+      font-size: 1.2rem; 
+      min-width: 280px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 1rem; 
+      min-height: 60px;
+    }
+    .question-container { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.5rem; 
+    }
+    .question-text { 
+      background-color: #333; 
+      border-left: 4px solid #ff3b3b; 
+      padding: 0.8rem; 
+      font-weight: bold; 
+      border-radius: 4px; 
+      flex-grow: 1;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      color: #eee;
+    }
+    .question-result { 
+      font-size: 1.8rem; 
+      min-width: 40px;
+      text-align: center;
+      color: #ff3b3b;
+    }
+    /* Make the pyramid stack upward */
+.guesses {
+  display: flex;
+  flex-direction: column-reverse; /* This flips the stacking order */
+  align-items: flex-start;        /* Keeps everything left-aligned */
+  width: 100%;
+  max-width: 20rem;
+}
+
+/* Center all rows EXCEPT the final row */
+.row {
+  display: flex;
+  justify-content: center; /* Centered for regular pyramid rows */
+  margin: 0.5rem 0;
+  align-items: center;
+}
+
+/* Final row stays left-aligned */
+.row.final-row {
+  justify-content: flex-start;
+}
+
+    .cell { 
+      width: 3rem; 
+      height: 3rem; 
+      font-size: 1.5rem; 
+      margin: 0.2rem; 
+      text-align: center; 
+      border: 2px solid #444; 
+      border-radius: 8px; 
+      background: #222; 
+      color: #fff;
+      font-weight: bold;
+      transition: all 0.25s ease;
+    }
+    .cell:focus {
+      outline: none;
+      border-color: #ff3b3b;
+      box-shadow: 0 0 10px rgba(255, 59, 59, 0.5);
+    }
+    .cell.green { 
+      background: #2eff6a; /* brighter green */
+      border-color: #18b84a;
+      color: #071208;
+      transform: scale(1.05);
+    }
+    .cell.yellow { 
+      background: #ffe34d; /* brighter yellow */
+      border-color: #d1a200;
+      color: #241c00;
+      transform: scale(1.05);
+    }
+    .cell.gray { 
+      background: #7f8c8d; 
+      border-color: #636e72;
+      color: #111;
+    }
+
+    #submit { 
+      margin-top: 1.5rem; 
+      padding: 0.8rem 1.5rem; 
+      font-size: 1.1rem; 
+      width: 100%; 
+      max-width: 300px; 
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      background: #ff3b3b; /* red primary button */
+      color: white;
+    }
+    #submit:hover {
+      background: #e02d2d; /* darker red */
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    #game-over { 
+      margin-top: 1.5rem; 
+      font-size: 1.5rem; 
+      text-align: center;
+      padding: 1rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      animation: fadeIn 0.5s ease-in;
+      display: block; /* will be filled at end */
+      color: #eee;
+    }
+
+    #start-screen { 
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0; 
+      background: #121212; 
+      color: #eee; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      text-align: center; 
+      padding: 2rem; 
+      z-index: 999;
+      animation: fadeIn 0.5s ease-in;
+    }
+    #start-button { 
+      margin-top: 2rem; 
+      padding: 1rem 2rem; 
+      font-size: 1.3rem; 
+      cursor: pointer; 
+      background: #ff3b3b; /* red start button */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    #start-button:hover {
+      background: #e02d2d;
       transform: translateY(-3px);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
@@ -306,5 +484,8 @@ e02d2d;
   </script>
 </body>
 </html>
+
+
+
 
 
