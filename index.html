@@ -1,0 +1,310 @@
+e02d2d;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    #timer { 
+      margin-top: 1rem; 
+      font-size: 1.3rem; 
+      color: #ff3b3b; /* red accent */
+      font-weight: bold;
+    }
+
+    #tracker { 
+      margin-top: 2rem; 
+      font-size: 1.2rem; 
+      max-width: 360px; 
+      text-align: center; 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 0.5rem; 
+      justify-content: center; 
+    }
+    .tracker-char { 
+      padding: 0.3rem 0.6rem; 
+      border: 1px solid #888; 
+      border-radius: 5px; 
+      background: #1e1e1e; 
+      color: #ff3b3b; 
+      transition: transform 0.2s ease;
+    }
+    .tracker-char.used {
+      text-decoration: line-through; 
+      color: #555; 
+      transform: scale(0.95);
+    }
+
+    footer { 
+      margin-top: 3rem; 
+      font-size: 0.9rem; 
+      color: #777; 
+      text-align: center; 
+      padding: 1.5rem;
+      border-top: 1px solid #333;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .cell { width: 2.8rem; height: 2.8rem; font-size: 1.3rem; }
+      .game-area { flex-direction: column; align-items: center; }
+      .questions { min-width: 100%; }
+      h1 { font-size: 2.2rem; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="start-screen">
+    <h1>Welcome to Gödle Hex</h1>
+    <p>A puzzle that uses logic and math with the same rules as Gödle</p>
+    <ul style="text-align: left; max-width: 400px;">
+      <li>Start at the <strong>bottom</strong> row and work your way up.</li>
+      <li>Answer 5 questions using hexadecimal digits (0–9, A–F).</li>
+      <li>Green = correct digit & position; Yellow = correct digit, wrong position.</li>
+      <li>One digit won’t be used and is placed at the end of the final 7-character row.</li>
+      <li>Good luck!</li>
+    </ul>
+    <button id="start-button">Start Game</button>
+  </div>
+
+  <h1>Gödle Hex</h1>
+  <div class="game-area">
+    <div class="questions" id="questions"></div>
+    <div class="guesses" id="guess-container"></div>
+  </div>
+  <button id="submit">Submit Guess</button>
+  <!-- ✅ Timer element added -->
+  <div id="timer">⏱ 00:00</div>
+  <div id="game-over"></div>
+  <div id="tracker"></div>
+  <footer>created by Cordell Booth</footer>
+
+  <script>
+     const pyramid = [1, 2, 3, 4, 5, 7];
+    const code = [3, "E", 7, 0, 9, 8, "A"];
+
+    const questions = [
+      "Carbon symbol",
+      "Volume dimensions",
+      "2nd month (abbr.)",
+      "83 × 25",
+      "15000 - 311",
+      "Enter the 6-digit code, then the unused digit"
+    ];
+
+    const correctAnswers = [
+      ["C"],
+      [3, "D"],
+      ["F", "E", "B"],
+      [2, 0, 7, 5],
+      [1, 4, 6, 8, 9],
+      [3, "E", 7, 0, 9, 8, "A"]
+    ];
+
+    let currentStep = 0;
+
+    const questionsDiv = document.getElementById("questions");
+    const guessContainer = document.getElementById("guess-container");
+    const submitBtn = document.getElementById("submit");
+    const gameOverDiv = document.getElementById("game-over");
+    const startScreen = document.getElementById("start-screen");
+    const startButton = document.getElementById("start-button");
+    const trackerDiv = document.getElementById("tracker");
+    const timerDiv = document.getElementById("timer");
+
+    let usedCharacters = new Set();
+    let questionElements = [];
+
+    const hexChars = [...Array(10).keys()].map(String).concat(["A","B","C","D","E","F"]);
+    function updateTracker() {
+      trackerDiv.innerHTML = "";
+      hexChars.forEach(char => {
+        const span = document.createElement("span");
+        span.className = "tracker-char" + (usedCharacters.has(char) ? " used" : "");
+        span.textContent = char;
+        trackerDiv.appendChild(span);
+      });
+    }
+
+    // ⏱ Timer helpers
+    let startTime = null;
+    let timerInterval = null;
+
+    function formatSeconds(total) {
+      const m = String(Math.floor(total / 60)).padStart(2, '0');
+      const s = String(total % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function startTimer() {
+      startTime = Date.now();
+      timerDiv.textContent = '⏱ 00:00';
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        timerDiv.textContent = `⏱ ${formatSeconds(elapsed)}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      return formatSeconds(elapsed);
+    }
+
+    function renderQuestion() {
+      // Clear previous questions and only show current one
+      questionsDiv.innerHTML = '';
+      
+      const qWrap = document.createElement("div");
+      qWrap.className = "question-container";
+      qWrap.id = `question-${currentStep}`;
+
+      const qText = document.createElement("div");
+      qText.className = "question-text";
+      qText.textContent = questions[currentStep];
+      qWrap.appendChild(qText);
+
+      const resultSpan = document.createElement("div");
+      resultSpan.className = "question-result";
+      resultSpan.id = `result-${currentStep}`;
+      qWrap.appendChild(resultSpan);
+
+      questionsDiv.appendChild(qWrap);
+      questionElements.push(qWrap);
+
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "row";
+      rowDiv.id = `row-${currentStep}`;
+      for (let i = 0; i < pyramid[currentStep]; i++) {
+        const input = document.createElement("input");
+        input.className = "cell active";
+        input.maxLength = 1;
+        input.type = "text";
+        input.autocapitalize = "characters";
+        input.addEventListener("input", (e) => {
+          input.value = input.value.toUpperCase().replace(/[^0-9A-F]/g, "");
+          if (e.target.value.length === 1 && i < pyramid[currentStep] - 1) {
+            rowDiv.children[i + 1].focus();
+          }
+        });
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") submitBtn.click();
+          if ((e.key === "Backspace" || e.key === "Delete") && e.target.value === "" && i > 0) {
+            rowDiv.children[i - 1].focus();
+          }
+        });
+        rowDiv.appendChild(input);
+      }
+
+      guessContainer.appendChild(rowDiv);
+      rowDiv.children[0].focus();
+    }
+
+    function getActiveInputs() { return Array.from(document.querySelectorAll(".cell.active")); }
+    function getInputValues()  { return getActiveInputs().map(input => input.value.trim()); }
+
+    function shakeRow(rowDiv) {
+      rowDiv.classList.add("shake");
+      setTimeout(() => rowDiv.classList.remove("shake"), 300);
+    }
+
+    function evaluateRow(values, rowDiv) {
+      const inputDigits = values.map(v => (isNaN(v) ? v.toUpperCase() : Number(v)));
+      const expected = correctAnswers[currentStep];
+
+      const isCorrect = inputDigits.length === expected.length && inputDigits.every((val, i) => {
+        const exp = expected[i];
+        return (typeof exp === "string") ? String(val).toUpperCase() === exp.toUpperCase() : val === exp;
+      });
+
+      if (!isCorrect) {
+        shakeRow(rowDiv);
+        return false;
+      }
+
+      document.getElementById(`result-${currentStep}`).textContent = "✅";
+
+      const feedback = inputDigits.map((digit, i) => {
+        const d = String(digit).toUpperCase();
+        if (String(code[i]).toUpperCase() === d) return "green";
+        if (code.map(x => String(x).toUpperCase()).includes(d)) return "yellow";
+        return "gray";
+      });
+
+      getActiveInputs().forEach((input, i) => {
+        input.classList.remove("active");
+        input.classList.add(feedback[i]);
+        input.disabled = true;
+      });
+
+      inputDigits.forEach(d => usedCharacters.add(String(d).toUpperCase()));
+      updateTracker();
+      return true;
+    }
+
+    function hideAnsweredQuestions() {
+      // Hide all questions except the current one
+      questionElements.forEach((element, index) => {
+        if (index !== currentStep) {
+          element.classList.add('hidden');
+        }
+      });
+    }
+
+    submitBtn.addEventListener("click", () => {
+      const rowDiv = guessContainer.lastElementChild;
+      const values = getInputValues();
+      if (values.length < pyramid[currentStep] || values.some(v => v === "")) return;
+
+      const correct = evaluateRow(values, rowDiv);
+      if (!correct) return;
+
+      // Hide the answered question
+      hideAnsweredQuestions();
+      
+      currentStep++;
+      if (currentStep < pyramid.length) {
+        renderQuestion();
+      } else {
+        const guess = values.map(v => (isNaN(v) ? v.toUpperCase() : Number(v)));
+        const solved = guess.every((d, i) => d === code[i]);
+        const finalTime = stopTimer();
+        gameOverDiv.innerHTML = solved ? `🎉 You cracked the code in ${finalTime}!` : `❌ Incorrect. The code was ${code.join("")}. Time: ${finalTime}`;
+        submitBtn.disabled = true;
+      }
+    });
+
+    startButton.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      updateTracker();
+      startTimer();
+      renderQuestion();
+    });
+
+    /* ==================
+       Dev Self-Tests
+       Run in console: runTests()
+       ================== */
+    function runTests() {
+      console.log("Running Gödle Hex tests...");
+      console.assert(document.getElementById('timer'), 'Timer element should exist');
+      console.assert(typeof startTimer === 'function', 'startTimer should be defined');
+      console.assert(typeof stopTimer === 'function', 'stopTimer should be defined');
+      console.assert(typeof formatSeconds === 'function', 'formatSeconds should be defined');
+      console.assert(formatSeconds(0) === '00:00', 'formatSeconds(0)');
+      console.assert(formatSeconds(5) === '00:05', 'formatSeconds(5)');
+      console.assert(formatSeconds(65) === '01:05', 'formatSeconds(65)');
+      console.log("All tests passed ✅");
+    }
+    window.runTests = runTests;
+  </script>
+</body>
+</html>
+
+
