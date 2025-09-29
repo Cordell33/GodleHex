@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GödleHex</title>
   <style>
+    /* ===== Base layout & theme ===== */
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
       background: #121212; 
@@ -19,7 +20,7 @@
     h1 { 
       font-size: 2.8rem; 
       margin-bottom: 1rem; 
-      color: #ff3b3b; /* red accent instead of blue */
+      color: #ff3b3b; /* red accent */
       text-shadow: 0 0 10px rgba(255, 59, 59, 0.5);
     }
     .game-area { 
@@ -38,11 +39,7 @@
       gap: 1rem; 
       min-height: 60px;
     }
-    .question-container { 
-      display: flex; 
-      align-items: center; 
-      gap: 0.5rem; 
-    }
+    .question-container { display: flex; align-items: center; gap: 0.5rem; }
     .question-text { 
       background-color: #333; 
       border-left: 4px solid #ff3b3b; 
@@ -59,27 +56,22 @@
       text-align: center;
       color: #ff3b3b;
     }
-    /* Make the pyramid stack upward */
-.guesses {
-  display: flex;
-  flex-direction: column-reverse; /* This flips the stacking order */
-  align-items: flex-start;        /* Keeps everything left-aligned */
-  width: 100%;
-  max-width: 20rem;
-}
 
-/* Center all rows EXCEPT the final row */
-.row {
-  display: flex;
-  justify-content: center; /* Centered for regular pyramid rows */
-  margin: 0.5rem 0;
-  align-items: center;
-}
-
-/* Final row stays left-aligned */
-.row.final-row {
-  justify-content: flex-start;
-}
+    /* ===== Upward pyramid ===== */
+    .guesses {
+      display: flex;
+      flex-direction: column-reverse; /* stack upward */
+      align-items: flex-start;        /* keep left aligned */
+      width: 100%;
+      max-width: 20rem;
+    }
+    .row { 
+      display: flex; 
+      justify-content: center; /* centered rows for pyramid look */
+      margin: 0.5rem 0; 
+      align-items: center; 
+    }
+    .row.final-row { justify-content: flex-start; } /* final code row left-aligned */
 
     .cell { 
       width: 3rem; 
@@ -145,7 +137,7 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.06);
       animation: fadeIn 0.5s ease-in;
-      display: block; /* will be filled at end */
+      display: block; /* filled at end */
       color: #eee;
     }
 
@@ -206,11 +198,7 @@
       color: #ff3b3b; 
       transition: transform 0.2s ease;
     }
-    .tracker-char.used {
-      text-decoration: line-through; 
-      color: #555; 
-      transform: scale(0.95);
-    }
+    .tracker-char.used { text-decoration: line-through; color: #555; transform: scale(0.95); }
 
     footer { 
       margin-top: 3rem; 
@@ -231,10 +219,92 @@
       h1 { font-size: 2.2rem; }
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ===== Slide Menu (off-canvas) ===== */
+    #menu-toggle {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 1100;
+      background: #ff3b3b;
+      color: #fff;
+      border: none;
+      padding: 0.55rem 0.9rem;
+      border-radius: 10px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.35);
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
     }
+    #menu-toggle:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.45); background:#e02d2d; }
+    #menu-toggle:active { transform: translateY(0); }
+
+    #menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+      z-index: 1000;
+    }
+
+    #side-menu {
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      width: 320px;
+      max-width: 86vw;
+      background: #1b1b1b;
+      color: #eee;
+      border-right: 1px solid #2a2a2a;
+      box-shadow: 8px 0 24px rgba(0,0,0,.45);
+      transform: translateX(-100%);
+      transition: transform .28s ease;
+      z-index: 1050;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      outline: none;
+    }
+    #side-menu h2 { margin: 0 0 6px; color: #ff6666; font-size: 1.3rem; }
+    #side-menu p { margin: 0 0 10px; color: #ccc; line-height: 1.35; }
+    #side-menu .login-row { display:flex; gap:8px; }
+    #side-menu input[type="text"] {
+      flex: 1;
+      padding: .55rem .7rem;
+      border-radius: 8px;
+      border: 1px solid #3a3a3a;
+      background:#222; color:#eee;
+    }
+    #side-menu button[type="submit"], #logout-button {
+      background:#ff3b3b; color:#fff; border:none; border-radius:8px; padding:.55rem .8rem; font-weight:700; cursor:pointer;
+    }
+    #side-menu a.external-link { color:#ff8a80; text-decoration:none; }
+    #side-menu a.external-link:hover { text-decoration:underline; }
+
+    /* Streak styles */
+    .streak-panel { 
+      margin-top: 6px; padding: 10px 12px; border-radius: 10px; background:#1f1f1f; border:1px solid #2a2a2a; 
+      box-shadow: inset 0 0 0 1px rgba(255,59,59,0.06);
+    }
+    .streak-panel h3 { margin: 0 0 8px; font-size: 1.05rem; color:#ff7a7a; }
+    .streak-row { display:flex; align-items: baseline; gap:8px; font-weight:700; }
+    #streak-count { font-size: 1.6rem; color:#ffd1d1; }
+    .streak-note { display:block; margin-top:6px; color:#9d9d9d; font-size: .85rem; }
+    .auth-status { color:#ddd; font-size:.95rem; }
+
+    /* Open state */
+    .menu-open #menu-backdrop { opacity: 1; pointer-events: auto; }
+    .menu-open #side-menu { transform: translateX(0); }
+    .menu-open #menu-toggle { background:#2b2b2b; color:#ffb3b3; }
+
+    /* Motion safety */
+    @media (prefers-reduced-motion: reduce) { #menu-backdrop, #side-menu, #menu-toggle { transition: none !important; } }
   </style>
 </head>
 <body>
@@ -251,20 +321,185 @@
     <button id="start-button">Start Game</button>
   </div>
 
+  <!-- Pull out menu modal -->
+  <button id="menu-toggle" type="button" aria-expanded="true" aria-controls="side-menu" aria-label="Toggle game menu">✕ Close</button>
+  <div id="menu-backdrop" role="presentation"></div>
+  <aside id="side-menu" aria-hidden="false" tabindex="-1">
+    <h2>Game Menu</h2>
+    <p>Sign in to track your streak, then use the Start Game button below the board whenever you're ready to play.</p>
+    <div class="login-panel" aria-live="polite">
+      <form id="login-form">
+        <label for="username-input">Player username</label>
+        <div class="login-row">
+          <input id="username-input" name="username" type="text" placeholder="Enter username" autocomplete="nickname" required />
+          <button type="submit" id="login-button">Log In</button>
+        </div>
+      </form>
+      <button id="logout-button" type="button" style="display: none;">Log Out</button>
+      <p class="login-hint">Your daily streak is saved per username on this device.</p>
+      <a class="external-link" href="https://cordell33.github.io/GodleHex/" target="_blank" rel="noopener noreferrer">Godle (daily)</a>
+    </div>
+    <div id="auth-status" class="auth-status" style="display:none;">Logged in as <strong id="current-username"></strong></div>
+    <div class="streak-panel" id="streak-panel" hidden>
+      <h3>🔥 Weekly Streak</h3>
+      <div class="streak-row">
+        <span id="streak-count">0</span> weeks
+      </div>
+      <small class="streak-note">Increments when you log in during a new week (Sun–Sat, your local time).</small>
+    </div>
+  </aside>
+
   <h1>Gödle Hex</h1>
   <div class="game-area">
     <div class="questions" id="questions"></div>
     <div class="guesses" id="guess-container"></div>
   </div>
   <button id="submit">Submit Guess</button>
-  <!-- ✅ Timer element added -->
   <div id="timer">⏱ 00:00</div>
   <div id="game-over"></div>
   <div id="tracker"></div>
   <footer>created by Cordell Booth</footer>
 
   <script>
-     const pyramid = [1, 2, 3, 4, 5, 7];
+    // ===== Slide Menu Controller =====
+    (function(){
+      const btn = document.getElementById('menu-toggle');
+      const aside = document.getElementById('side-menu');
+      const backdrop = document.getElementById('menu-backdrop');
+      let lastFocus = null;
+
+      const focusableSel = 'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])';
+
+      function isOpen(){ return document.body.classList.contains('menu-open'); }
+      function open(){
+        if (isOpen()) return;
+        lastFocus = document.activeElement;
+        document.body.classList.add('menu-open');
+        btn.setAttribute('aria-expanded','true');
+        aside.setAttribute('aria-hidden','false');
+        btn.textContent = '✕ Close';
+        setTimeout(()=>{
+          const first = aside.querySelector(focusableSel) || aside;
+          first.focus();
+        }, 0);
+      }
+      function close(){
+        if (!isOpen()) return;
+        document.body.classList.remove('menu-open');
+        btn.setAttribute('aria-expanded','false');
+        aside.setAttribute('aria-hidden','true');
+        btn.textContent = '☰ Menu';
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      }
+      function toggle(){ isOpen() ? close() : open(); }
+
+      (btn.getAttribute('aria-expanded') === 'true') ? open() : close();
+      btn.addEventListener('click', toggle);
+      backdrop.addEventListener('click', close);
+      window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') close(); });
+
+      aside.addEventListener('keydown', (e)=>{
+        if (!isOpen() || e.key !== 'Tab') return;
+        const items = Array.from(aside.querySelectorAll(focusableSel)).filter(el => el.offsetParent !== null);
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+    })();
+  </script>
+
+  <script>
+    // ===== Auth + Weekly Streak (Sun–Sat, no reset) =====
+    (function(){
+      const loginForm = document.getElementById('login-form');
+      const usernameInput = document.getElementById('username-input');
+      const loginBtn = document.getElementById('login-button');
+      const logoutBtn = document.getElementById('logout-button');
+      const authStatus = document.getElementById('auth-status');
+      const currentUserEl = document.getElementById('current-username');
+      const streakPanel = document.getElementById('streak-panel');
+      const streakCountEl = document.getElementById('streak-count');
+
+      let loggedInUser = null;
+
+      function storageKey(user){ return `ghx_user_${user}`; }
+
+      function getWeekKey(date = new Date()){
+        // Sunday-based weeks (local time): key is Sunday-of-week anchored week number
+        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const day = d.getDay(); // 0=Sun..6=Sat
+        const sunday = new Date(d);
+        sunday.setDate(d.getDate() - day); // back to Sunday
+        const year = sunday.getFullYear();
+        const firstJan = new Date(year, 0, 1);
+        const firstJanDow = firstJan.getDay();
+        const firstSunday = new Date(firstJan);
+        firstSunday.setDate(firstJan.getDate() - firstJanDow); // Sunday on/before Jan 1
+        const diffDays = Math.floor((sunday - firstSunday) / 86400000);
+        const week = Math.floor(diffDays / 7) + 1;
+        return `${year}-W${String(week).padStart(2,'0')}`;
+      }
+
+      // expose helpers for testing
+      window.__ghx_getWeekKey = getWeekKey;
+
+      function loadUser(user){
+        try { return JSON.parse(localStorage.getItem(storageKey(user))) || null; }
+        catch { return null; }
+      }
+      function saveUser(user, data){ localStorage.setItem(storageKey(user), JSON.stringify(data)); }
+
+      function updateStreakOnLogin(user){
+        const nowKey = getWeekKey();
+        let data = loadUser(user) || { streak: 0, lastWeek: null };
+        if (data.lastWeek !== nowKey) {
+          // new week detected → increment once, never reset for gaps
+          data.streak = (data.streak || 0) + 1;
+          data.lastWeek = nowKey;
+        }
+        saveUser(user, data);
+        streakCountEl.textContent = String(data.streak || 0);
+      }
+      window.__ghx_updateStreakOnLogin = updateStreakOnLogin; // test hook
+
+      function setLoggedInUI(user){
+        loggedInUser = user;
+        authStatus.style.display = 'block';
+        currentUserEl.textContent = user;
+        streakPanel.hidden = false;
+        loginForm.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        const data = loadUser(user) || { streak: 0 };
+        streakCountEl.textContent = String(data.streak || 0);
+      }
+      function setLoggedOutUI(){
+        loggedInUser = null;
+        authStatus.style.display = 'none';
+        streakPanel.hidden = true;
+        loginForm.style.display = 'block';
+        logoutBtn.style.display = 'none';
+        currentUserEl.textContent = '';
+      }
+
+      loginForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const user = (usernameInput.value || '').trim();
+        if (!user) return;
+        updateStreakOnLogin(user);
+        setLoggedInUI(user);
+        localStorage.setItem('ghx_last_user', user);
+      });
+      logoutBtn.addEventListener('click', ()=>{ setLoggedOutUI(); });
+
+      // Prefill last username (no auto-increment)
+      const lastUser = localStorage.getItem('ghx_last_user');
+      if (lastUser) { usernameInput.value = lastUser; }
+    })();
+
+    // ===== Game Logic =====
+    const pyramid = [1, 2, 3, 4, 5, 7];
     const code = [3, "E", 7, 0, 9, 8, "A"];
 
     const questions = [
@@ -357,7 +592,7 @@
       questionElements.push(qWrap);
 
       const rowDiv = document.createElement("div");
-      rowDiv.className = "row";
+      rowDiv.className = (currentStep === pyramid.length - 1) ? "row final-row" : "row";
       rowDiv.id = `row-${currentStep}`;
       for (let i = 0; i < pyramid[currentStep]; i++) {
         const input = document.createElement("input");
@@ -427,7 +662,7 @@
     }
 
     function hideAnsweredQuestions() {
-      // Hide all questions except the current one
+      // Hide all questions except the current one (defensive if multiple were present)
       questionElements.forEach((element, index) => {
         if (index !== currentStep) {
           element.classList.add('hidden');
@@ -443,7 +678,6 @@
       const correct = evaluateRow(values, rowDiv);
       if (!correct) return;
 
-      // Hide the answered question
       hideAnsweredQuestions();
       
       currentStep++;
@@ -478,14 +712,27 @@
       console.assert(formatSeconds(0) === '00:00', 'formatSeconds(0)');
       console.assert(formatSeconds(5) === '00:05', 'formatSeconds(5)');
       console.assert(formatSeconds(65) === '01:05', 'formatSeconds(65)');
+
+      // New tests: final row alignment
+      const prevStep = currentStep;
+      currentStep = pyramid.length - 1;
+      renderQuestion();
+      const lastRow = document.getElementById(`row-${currentStep}`);
+      console.assert(lastRow && lastRow.classList.contains('final-row'), 'Final row should have class final-row');
+      // cleanup
+      currentStep = prevStep; 
+      
+      // New tests: Sunday-based week key should change across Sat->Sun
+      const wkSat = window.__ghx_getWeekKey(new Date('2025-09-27')); // Saturday
+      const wkSun = window.__ghx_getWeekKey(new Date('2025-09-28')); // Sunday next week
+      console.assert(wkSat !== wkSun, 'Week key should change from Saturday to next Sunday');
+      const wkSun2 = window.__ghx_getWeekKey(new Date('2025-09-28'));
+      const wkFri = window.__ghx_getWeekKey(new Date('2025-10-03')); // same Sun-Sat week
+      console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
+
       console.log("All tests passed ✅");
     }
     window.runTests = runTests;
   </script>
 </body>
 </html>
-
-
-
-
-
