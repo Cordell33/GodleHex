@@ -57,17 +57,17 @@
       color: #ff3b3b;
     }
 
-    /* ===== Upward pyramid ===== */
+    /* ===== Upward pyramid (right-aligned) ===== */
     .guesses {
       display: flex;
       flex-direction: column-reverse; /* stack upward */
-      align-items: flex-start;        /* keep left aligned */
+      align-items: flex-end;          /* anchor to the right */
       width: 100%;
-      max-width: 20rem;
+      max-width: 28rem;
     }
     .row { 
       display: flex; 
-      justify-content: center; /* centered rows for pyramid look */
+      justify-content: center;        /* centered contents for pyramid look */
       margin: 0.5rem 0; 
       align-items: center; 
     }
@@ -109,6 +109,10 @@
       color: #111;
     }
 
+    /* Shake animation */
+    @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(-6px)} 50%{transform:translateX(6px)} 75%{transform:translateX(-6px)} 100%{transform:translateX(0)} }
+    .shake { animation: shake .26s; }
+
     #submit { 
       margin-top: 1.5rem; 
       padding: 0.8rem 1.5rem; 
@@ -123,11 +127,7 @@
       background: #ff3b3b; /* red primary button */
       color: white;
     }
-    #submit:hover {
-      background: #e02d2d; /* darker red */
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
+    #submit:hover { background: #e02d2d; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
 
     #game-over { 
       margin-top: 1.5rem; 
@@ -142,8 +142,7 @@
     }
 
     #start-screen { 
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0; 
+      position: fixed; inset: 0; 
       background: #121212; 
       color: #eee; 
       display: flex; 
@@ -167,18 +166,9 @@
       font-weight: bold;
       transition: all 0.3s ease;
     }
-    #start-button:hover {
-      background: #e02d2d;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
+    #start-button:hover { background: #e02d2d; transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); }
 
-    #timer { 
-      margin-top: 1rem; 
-      font-size: 1.3rem; 
-      color: #ff3b3b; /* red accent */
-      font-weight: bold;
-    }
+    #timer { margin-top: 1rem; font-size: 1.3rem; color: #ff3b3b; font-weight: bold; }
 
     #tracker { 
       margin-top: 2rem; 
@@ -190,63 +180,19 @@
       gap: 0.5rem; 
       justify-content: center; 
     }
-    .tracker-char { 
-      padding: 0.3rem 0.6rem; 
-      border: 1px solid #888; 
-      border-radius: 5px; 
-      background: #1e1e1e; 
-      color: #ff3b3b; 
-      transition: transform 0.2s ease;
-    }
+    .tracker-char { padding: 0.3rem 0.6rem; border: 1px solid #888; border-radius: 5px; background: #1e1e1e; color: #ff3b3b; transition: transform 0.2s ease; }
     .tracker-char.used { text-decoration: line-through; color: #555; transform: scale(0.95); }
- .share-buttons { 
-      display: flex; 
-      gap: 1rem; 
-      margin-top: 1.5rem; 
-      justify-content: center; 
-      flex-wrap: wrap; 
-    }
-    .share-button { 
-      padding: 0.8rem 1.5rem; 
-      border-radius: 8px; 
-      border: none; 
-      cursor: pointer; 
-      font-size: 1rem; 
-      display: flex; 
-      align-items: center; 
-      gap: 0.5rem; 
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-    .share-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
+
+    .share-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; }
+    .share-button { padding: 0.8rem 1.5rem; border-radius: 8px; border: none; cursor: pointer; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; font-weight: bold; transition: all 0.3s ease; }
+    .share-button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
     .share-button.twitter { background: #1DA1F2; color: white; }
     .share-button.facebook { background: #4267B2; color: white; }
     .share-button.copy { background: #333; color: white; }
-    #copy-message { 
-      margin-top: 1rem; 
-      color: #00bcd4; 
-      display: none;
-      animation: fadeIn 0.5s ease-in;
-    }
-    #share-results { 
-      margin-top: 2rem; 
-      display: none; 
-      text-align: center;
-      animation: fadeIn 0.5s ease-in;
-    }
-    footer { 
-      margin-top: 3rem; 
-      font-size: 0.9rem; 
-      color: #777; 
-      text-align: center; 
-      padding: 1.5rem;
-      border-top: 1px solid #333;
-      width: 100%;
-      max-width: 600px;
-    }
+    #copy-message { margin-top: 1rem; color: #00bcd4; display: none; animation: fadeIn 0.5s ease-in; }
+    #share-results { margin-top: 2rem; display: none; text-align: center; animation: fadeIn 0.5s ease-in; }
+
+    footer { margin-top: 3rem; font-size: 0.9rem; color: #777; text-align: center; padding: 1.5rem; border-top: 1px solid #333; width: 100%; max-width: 600px; }
 
     @media (max-width: 600px) {
       body { padding: 1rem; }
@@ -259,148 +205,40 @@
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* ===== Slide Menu (off-canvas) ===== */
-  #menu-toggle {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 1100;
-      background: #00bcd4;
-      color: #121212;
-      border: none;
-      border-radius: 999px;
-      padding: 0.55rem 1.1rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-      transition: background 0.2s ease, transform 0.2s ease;
+    #menu-toggle {
+      position: fixed; top: 1rem; left: 1rem; z-index: 1100;
+      background: #00bcd4; color: #121212; border: none; border-radius: 999px;
+      padding: 0.55rem 1.1rem; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); transition: background 0.2s ease, transform 0.2s ease;
     }
-    #menu-toggle:hover {
-      background: #00a0b7;
-      transform: translateY(-1px);
-    }
-    body.menu-open #menu-toggle {
-      background: #0097a7;
-      color: #fff;
-    }
-    #menu-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 1000;
-    }
-    body.menu-open #menu-backdrop {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    #menu-toggle:hover { background: #00a0b7; transform: translateY(-1px); }
+    body.menu-open #menu-toggle { background: #0097a7; color: #fff; }
+    #menu-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000; }
+    body.menu-open #menu-backdrop { opacity: 1; pointer-events: auto; }
     #side-menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: min(320px, 85vw);
-      background: #1b1b1b;
-      box-shadow: 8px 0 24px rgba(0, 0, 0, 0.45);
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1050;
-      padding: 1.5rem 1.75rem 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      overflow-y: auto;
+      position: fixed; top: 0; left: 0; height: 100vh; width: min(320px, 85vw);
+      background: #1b1b1b; box-shadow: 8px 0 24px rgba(0, 0, 0, 0.45);
+      transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1050;
+      padding: 1.5rem 1.75rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto;
     }
-    body.menu-open #side-menu {
-      transform: translateX(0);
-    }
-    #side-menu h2 {
-      margin: 0;
-      color: #00bcd4;
-      font-size: 1.5rem;
-      text-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
-    }
-    #side-menu p {
-      margin: 0;
-      color: #ddd;
-      line-height: 1.4;
-    }
-    .login-panel {
-      margin-top: 1.5rem;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
-    }
-    .login-panel label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-    .login-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .login-panel input[type="text"] {
-      flex: 1;
-      padding: 0.6rem 0.8rem;
-      border-radius: 8px;
-      border: 1px solid #444;
-      background: #1e1e1e;
-      color: #fff;
-      font-size: 1rem;
-    }
-    .login-panel input[type="text"]:focus {
-      outline: none;
-      border-color: #00bcd4;
-      box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
-    }
-    .login-panel button {
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      border: none;
-      background: #00bcd4;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .login-panel button:hover {
-      background: #0097a7;
-    }
-    .login-panel .external-link {
-      margin-top: 0.75rem;
-      display: inline-block;
-      color: #00bcd4;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    .login-panel .external-link:hover {
-      color: #ff9800;
-      text-decoration: underline;
-    }
-    #logout-button {
-      margin-top: 0.75rem;
-      width: 100%;
-      background: #ef5350;
-    }
-    #logout-button:hover {
-      background: #e53935;
-    }
-    .login-hint {
-      margin-top: 0.75rem;
-      font-size: 0.9rem;
-      color: #ccc;
+    body.menu-open #side-menu { transform: translateX(0); }
+    #side-menu h2 { margin: 0; color: #00bcd4; font-size: 1.5rem; text-shadow: 0 0 8px rgba(0, 188, 212, 0.4); }
+    #side-menu p { margin: 0; color: #ddd; line-height: 1.4; }
+    .login-panel { margin-top: 1.5rem; background: rgba(255, 255, 255, 0.05); padding: 1rem 1.5rem; border-radius: 12px; max-width: 420px; width: 100%; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25); }
+    .login-panel label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    .login-row { display: flex; gap: 0.5rem; }
+    .login-panel input[type="text"] { flex: 1; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 1rem; }
+    .login-panel input[type="text"]:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2); }
+    .login-panel button { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; background: #00bcd4; color: #fff; font-weight: 600; cursor: pointer; transition: background 0.2s ease; }
+    .login-panel button:hover { background: #0097a7; }
+    .login-panel .external-link { margin-top: 0.75rem; display: inline-block; color: #00bcd4; font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
+    .login-panel .external-link:hover { color: #ff9800; text-decoration: underline; }
+    #logout-button { margin-top: 0.75rem; width: 100%; background: #ef5350; }
+    #logout-button:hover { background: #e53935; }
+    .login-hint { margin-top: 0.75rem; font-size: 0.9rem; color: #ccc; }
+
     /* Streak styles */
-    .streak-panel { 
-      margin-top: 6px; padding: 10px 12px; border-radius: 10px; background:#1f1f1f; border:1px solid #2a2a2a; 
-      box-shadow: inset 0 0 0 1px rgba(255,59,59,0.06);
-    }
+    .streak-panel { margin-top: 6px; padding: 10px 12px; border-radius: 10px; background:#1f1f1f; border:1px solid #2a2a2a; box-shadow: inset 0 0 0 1px rgba(255,59,59,0.06); }
     .streak-panel h3 { margin: 0 0 8px; font-size: 1.05rem; color:#ff7a7a; }
     .streak-row { display:flex; align-items: baseline; gap:8px; font-weight:700; }
     #streak-count { font-size: 1.6rem; color:#ffd1d1; }
@@ -479,14 +317,15 @@
   <script>
     // ===== Slide Menu Controller =====
     (function(){
-      // Ensure external links work inside menu
-      document.addEventListener('DOMContentLoaded', () => {
+      function wireExternalLinks(){
         document.querySelectorAll('.external-link').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.stopPropagation(); // prevents the menu toggle from interfering
-          });
+          link.addEventListener('click', (e) => { e.stopPropagation(); });
         });
-      });
+      }
+      // run now and on DOMContentLoaded (in case this script loads before elements exist)
+      wireExternalLinks();
+      document.addEventListener('DOMContentLoaded', wireExternalLinks);
+
       const btn = document.getElementById('menu-toggle');
       const aside = document.getElementById('side-menu');
       const backdrop = document.getElementById('menu-backdrop');
@@ -624,24 +463,24 @@
 
     // ===== Game Logic =====
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [3, "E", 7, 0, 9, 8, "A"];
+    const code = ["C", 7, 3, 9, "F", "B", 8];
 
     const questions = [
-      "Carbon symbol",
-      "Volume dimensions",
-      "2nd month (abbr.)",
-      "83 × 25",
-      "15000 - 311",
-      "Enter the 6-digit code, then the unused digit"
+      "First letter of the alphabet",
+      "Northop spirt stealth bomb",
+      "Online meeting with your significant (in text lingo)",
+      "Famous Ford truck",
+      "One less then the ∫(10x^3 +6x^2 +7x +7)dx from 0 to 11",
+      "Enter the unused digit, followed by the code"
     ];
 
     const correctAnswers = [
-      ["C"],
-      [3, "D"],
-      ["F", "E", "B"],
-      [2, 0, 7, 5],
-      [1, 4, 6, 8, 9],
-      [3, "E", 7, 0, 9, 8, "A"]
+      ["A"],
+      ["B", 2],
+      ["E", "D", 8],
+      ["F", 1, 5, 0],
+      [3, 9, 7, 6, 4],
+      ["C", 7, 3, 9, "F", "B", 8]
     ];
 
     let currentStep = 0;
@@ -746,9 +585,19 @@
     function getActiveInputs() { return Array.from(document.querySelectorAll(".cell.active")); }
     function getInputValues()  { return getActiveInputs().map(input => input.value.trim()); }
 
-    function shakeRow(rowDiv) {
-      rowDiv.classList.add("shake");
-      setTimeout(() => rowDiv.classList.remove("shake"), 300);
+    function shakeRow(rowDiv) { rowDiv.classList.add("shake"); setTimeout(() => rowDiv.classList.remove("shake"), 300); }
+
+    // Pure helper for tests and feedback generation
+    function computeFeedbackForRow(inputDigits, rowLen) {
+      const codeUpper = code.map(x => String(x).toUpperCase());
+      const offset = Math.max(0, codeUpper.length - rowLen);
+      return inputDigits.map((digit, i) => {
+        const d = String(digit).toUpperCase();
+        const target = codeUpper[offset + i];
+        if (target === d) return "green";
+        if (codeUpper.includes(d)) return "yellow";
+        return "gray";
+      });
     }
 
     function evaluateRow(values, rowDiv) {
@@ -760,20 +609,14 @@
         return (typeof exp === "string") ? String(val).toUpperCase() === exp.toUpperCase() : val === exp;
       });
 
-      if (!isCorrect) {
-        shakeRow(rowDiv);
-        return false;
-      }
+      if (!isCorrect) { shakeRow(rowDiv); return false; }
 
       document.getElementById(`result-${currentStep}`).textContent = "✅";
 
-      const feedback = inputDigits.map((digit, i) => {
-        const d = String(digit).toUpperCase();
-        if (String(code[i]).toUpperCase() === d) return "green";
-        if (code.map(x => String(x).toUpperCase()).includes(d)) return "yellow";
-        return "gray";
-      });
+      // Right-anchored position mapping
+      const feedback = computeFeedbackForRow(inputDigits, pyramid[currentStep]);
 
+      // Paint cells + lock row
       getActiveInputs().forEach((input, i) => {
         input.classList.remove("active");
         input.classList.add(feedback[i]);
@@ -788,32 +631,54 @@
     function hideAnsweredQuestions() {
       // Hide all questions except the current one (defensive if multiple were present)
       questionElements.forEach((element, index) => {
-        if (index !== currentStep) {
-          element.classList.add('hidden');
-        }
+        if (index !== currentStep) { element.classList.add('hidden'); }
       });
     }
 
     // ===== Sharing helpers =====
-   function buildShareText() {
-  // Collect all rows, then drop the final 7-cell row
-  const rows = Array.from(document.querySelectorAll('.guesses .row'));
-  const playableRows = rows.slice(0, -1);
+    function buildShareText() {
+      // Collect all guess rows, but EXCLUDE the final 7-cell row from the share grid
+      const rows = Array.from(document.querySelectorAll('.guesses .row'));
+      if (!rows.length) return '';
+      const playableRows = rows.slice(0, -1); // drop last row (final code)
 
-  // Map to 🟩 🟨 ⬛ only
-  const mapColor = (el) =>
-    el.classList.contains('green') ? '🟩' :
-    el.classList.contains('yellow') ? '🟨' : '⬛';
+      // Map cell classes to colored squares only
+      const mapColor = (el) => (
+        el.classList.contains('green') ? '🟩' :
+        el.classList.contains('yellow') ? '🟨' : '⬛'
+      );
 
-  // Reverse so the grid reads top→bottom visually
-  const grid = playableRows
-    .map(r => Array.from(r.querySelectorAll('.cell')).map(mapColor).join(''))
-    .reverse()
-    .join('\n');
+      // Because the visual pyramid stacks upward, reverse to show top→bottom visually
+      const grid = playableRows
+        .map(r => Array.from(r.querySelectorAll('.cell')).map(mapColor).join(''))
+        .reverse()
+        .join('\n');
 
-  const time = (timerDiv ? timerDiv.textContent.replace('⏱','').trim() : '').trim();
-  return `${time}\n${grid}`.trim();  // time + boxes only
+      // Header: Title before time
+      const title = 'Godle Hex';
+      const timeText = (timerDiv ? timerDiv.textContent.replace('⏱','').trim() : '').trim();
+      const header = `${title} — ${timeText}`.trim();
 
+      // Streak line (only if logged in)
+      const streakEl = document.getElementById('streak-count');
+      let weeks = 0;
+      if (streakEl) {
+        const n = parseInt(streakEl.textContent, 10);
+        weeks = Number.isFinite(n) ? n : 0;
+      }
+      let streakLine = '';
+      const userLoggedIn = document.getElementById('auth-status') && document.getElementById('auth-status').style.display !== 'none';
+      if (userLoggedIn) {
+        if (weeks === 0) {
+          streakLine = `(newbie) 🔥`;
+        } else {
+          const weeksLabel = weeks === 1 ? 'week' : 'weeks';
+          streakLine = `(${weeks} ${weeksLabel}) 🔥`;
+        }
+      }
+
+      // Return: header, grid, then optional streak line on its own row
+      return [header, grid, streakLine || null].filter(Boolean).join('\n').trim();
     }
 
     async function copyResults() {
@@ -834,7 +699,7 @@
       if (!win) { copyResults(); alert('Facebook share popup was blocked. Your results were copied—paste into Facebook manually.'); }
     }
 
-    // Hook up buttons (if they exist)
+    // Hook up buttons (if they exist) + auto-show at game over
     (function(){
       const sr = document.getElementById('share-results');
       const tw = document.getElementById('share-twitter');
@@ -843,7 +708,6 @@
       if (tw) tw.addEventListener('click', shareOnTwitter);
       if (fb) fb.addEventListener('click', shareOnFacebook);
       if (cp) cp.addEventListener('click', copyResults);
-      // show when game-over text appears
       const go = document.getElementById('game-over');
       if (go && sr) {
         const mo = new MutationObserver(()=>{ if (go.textContent.trim().length) sr.style.display = 'flex'; });
@@ -894,22 +758,31 @@
       console.assert(formatSeconds(5) === '00:05', 'formatSeconds(5)');
       console.assert(formatSeconds(65) === '01:05', 'formatSeconds(65)');
 
-      // New tests: final row alignment
+      // Final row alignment
       const prevStep = currentStep;
-      currentStep = pyramid.length - 1;
-      renderQuestion();
+      currentStep = pyramid.length - 1; renderQuestion();
       const lastRow = document.getElementById(`row-${currentStep}`);
       console.assert(lastRow && lastRow.classList.contains('final-row'), 'Final row should have class final-row');
       // cleanup
       currentStep = prevStep; 
-      
-      // New tests: Sunday-based week key should change across Sat->Sun
+
+      // Sunday-based week key should change across Sat->Sun
       const wkSat = window.__ghx_getWeekKey(new Date('2025-09-27')); // Saturday
       const wkSun = window.__ghx_getWeekKey(new Date('2025-09-28')); // Sunday next week
       console.assert(wkSat !== wkSun, 'Week key should change from Saturday to next Sunday');
       const wkSun2 = window.__ghx_getWeekKey(new Date('2025-09-28'));
       const wkFri = window.__ghx_getWeekKey(new Date('2025-10-03')); // same Sun-Sat week
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
+
+      // New: feedback mapping helper tests (right-anchored)
+      const fb1 = computeFeedbackForRow(["F","B",8], 3); // should match last 3 of code
+      console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
+      const fb2 = computeFeedbackForRow([7,"F"], 2); // both in code but not at last-2 exact spots
+      console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
+
+      // New: basic sharing output structure (safe to call anytime)
+      const shareText = buildShareText();
+      console.assert(typeof shareText === 'string', 'Share text should be a string');
 
       console.log("All tests passed ✅");
     }
