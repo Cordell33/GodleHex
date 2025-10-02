@@ -659,7 +659,9 @@
         .map(r => {
           const cells = Array.from(r.querySelectorAll('.cell'));
           const colors = cells.map(mapColor).join('');
-          const padding = ' '.repeat(Math.max(0, maxPlayableWidth - cells.length));
+          const missingCells = Math.max(0, maxPlayableWidth - cells.length);
+          // Pad by 5 spaces per missing cell so the share grid mimics the visual cell width.
+          const padding = ' '.repeat(missingCells * 5);
           return padding + colors;
         })
         .reverse()
