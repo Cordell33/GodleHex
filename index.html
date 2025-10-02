@@ -642,6 +642,12 @@
       if (!rows.length) return '';
       const playableRows = rows.slice(0, -1); // drop last row (final code)
 
+      // Determine the visual width of the share grid so we can right-align rows
+      const maxPlayableWidth = playableRows.reduce((max, row) => {
+        const cellCount = row.querySelectorAll('.cell').length;
+        return Math.max(max, cellCount);
+      }, 0);
+
       // Map cell classes to colored squares only
       const mapColor = (el) => (
         el.classList.contains('green') ? '🟩' :
@@ -650,7 +656,14 @@
 
       // Because the visual pyramid stacks upward, reverse to show top→bottom visually
       const grid = playableRows
-        .map(r => Array.from(r.querySelectorAll('.cell')).map(mapColor).join(''))
+        .map(r => {
+          const cells = Array.from(r.querySelectorAll('.cell'));
+          const colors = cells.map(mapColor).join('');
+          const missingCells = Math.max(0, maxPlayableWidth - cells.length);
+          // Pad by 5 spaces per missing cell so the share grid mimics the visual cell width.
+          const padding = ' '.repeat(missingCells * 5);
+          return padding + colors;
+        })
         .reverse()
         .join('\n');
 
