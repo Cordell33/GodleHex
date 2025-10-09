@@ -607,6 +607,9 @@
 
       target.value = char.toUpperCase();
       target.dispatchEvent(new Event("input", { bubbles: true }));
+      if (typeof target.focus === "function") {
+        target.focus();
+      }
     }
 
     function updateTracker() {
@@ -849,7 +852,7 @@
       }
     })();
 
-    submitBtn.addEventListener("click", () => {
+    function attemptSubmit() {
       const rowDiv = guessContainer.lastElementChild;
       const values = getInputValues();
       if (values.length < pyramid[currentStep] || values.some(v => v === "")) return;
@@ -858,7 +861,7 @@
       if (!correct) return;
 
       hideAnsweredQuestions();
-      
+
       currentStep++;
       if (currentStep < pyramid.length) {
         renderQuestion();
@@ -869,6 +872,24 @@
         gameOverDiv.innerHTML = solved ? `🎉 You cracked the code in ${finalTime}!` : `❌ Incorrect. The code was ${code.join("")}. Time: ${finalTime}`;
         submitBtn.disabled = true;
       }
+    }
+
+    submitBtn.addEventListener("click", attemptSubmit);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" || event.repeat) return;
+      if (submitBtn.disabled) return;
+      if (startScreen && startScreen.style.display !== "none") return;
+      if (event.target && event.target.closest && event.target.closest('#side-menu')) return;
+
+      const hasInputs = getActiveInputs().length > 0;
+      if (!hasInputs) return;
+
+      const values = getInputValues();
+      if (values.length < pyramid[currentStep] || values.some(v => v === "")) return;
+
+      event.preventDefault();
+      attemptSubmit();
     });
 
     startButton.addEventListener("click", () => {
