@@ -170,29 +170,28 @@
 
     #timer { margin-top: 1rem; font-size: 1.3rem; color: #ff3b3b; font-weight: bold; }
 
-    #tracker { 
-      margin-top: 2rem; 
-      font-size: 1.2rem; 
-      max-width: 360px; 
-      text-align: center; 
-      display: flex; 
-      flex-wrap: wrap; 
-      gap: 0.5rem; 
-      justify-content: center; 
+    #tracker {
+      margin: 2rem auto 0;
+      max-width: 360px;
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 0.35rem;
+      justify-items: center;
     }
     .tracker-char {
-      padding: 0.3rem 0.6rem;
+      padding: 0.2rem 0.4rem;
       border: 1px solid #888;
       border-radius: 5px;
       background: #1e1e1e;
       color: #ff3b3b;
+      font-size: 1rem;
       transition: transform 0.2s ease;
       cursor: pointer;
       user-select: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 2rem;
+      min-width: 1.6rem;
     }
     .tracker-char:focus { outline: 2px solid #ff3b3b; outline-offset: 2px; }
     .tracker-char.used { text-decoration: line-through; color: #555; transform: scale(0.95); }
