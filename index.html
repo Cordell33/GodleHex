@@ -180,7 +180,21 @@
       gap: 0.5rem; 
       justify-content: center; 
     }
-    .tracker-char { padding: 0.3rem 0.6rem; border: 1px solid #888; border-radius: 5px; background: #1e1e1e; color: #ff3b3b; transition: transform 0.2s ease; }
+    .tracker-char {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #888;
+      border-radius: 5px;
+      background: #1e1e1e;
+      color: #ff3b3b;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+    }
+    .tracker-char:focus { outline: 2px solid #ff3b3b; outline-offset: 2px; }
     .tracker-char.used { text-decoration: line-through; color: #555; transform: scale(0.95); }
 
     .share-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; }
@@ -580,12 +594,38 @@
     let questionElements = [];
 
     const hexChars = [...Array(10).keys()].map(String).concat(["A","B","C","D","E","F"]);
+    function handleTrackerChar(char) {
+      const activeInputs = getActiveInputs();
+      if (!activeInputs.length) return;
+
+      let target = document.activeElement;
+      const isActiveCell = target && target.classList && target.classList.contains("cell") && target.classList.contains("active");
+      if (!isActiveCell) {
+        target = activeInputs.find(input => input.value === "") || activeInputs[0];
+      }
+
+      if (!target) return;
+
+      target.value = char.toUpperCase();
+      target.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+
     function updateTracker() {
       trackerDiv.innerHTML = "";
       hexChars.forEach(char => {
         const span = document.createElement("span");
         span.className = "tracker-char" + (usedCharacters.has(char) ? " used" : "");
         span.textContent = char;
+        span.setAttribute("role", "button");
+        span.tabIndex = 0;
+        const activate = () => handleTrackerChar(char);
+        span.addEventListener("click", activate);
+        span.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            activate();
+          }
+        });
         trackerDiv.appendChild(span);
       });
     }
