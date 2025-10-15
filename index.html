@@ -760,6 +760,8 @@
     }
 
     // ===== Sharing helpers =====
+    const GAME_SHARE_URL = 'https://cordell33.github.io/GodleHex/';
+
     function buildShareText() {
       // Collect all guess rows, but EXCLUDE the final 7-cell row from the share grid
       const rows = Array.from(document.querySelectorAll('.guesses .row'));
@@ -815,7 +817,10 @@
       }
 
       // Return: header, grid, then optional streak line on its own row
-      return [header, grid, streakLine || null].filter(Boolean).join('\n').trim();
+      const pieces = [header, grid];
+      if (streakLine) pieces.push(streakLine);
+      pieces.push(`Play: ${GAME_SHARE_URL}`);
+      return pieces.filter(Boolean).join('\n').trim();
     }
 
     async function copyResults() {
@@ -831,7 +836,7 @@
     }
 
     function shareOnFacebook(){
-      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(buildShareText())}`;
+      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(GAME_SHARE_URL)}&quote=${encodeURIComponent(buildShareText())}`;
       const win = window.open(shareUrl, 'fb-share-dialog', 'width=626,height=436');
       if (!win) { copyResults(); alert('Facebook share popup was blocked. Your results were copied—paste into Facebook manually.'); }
     }
