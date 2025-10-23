@@ -129,9 +129,9 @@
     }
     #submit:hover { background: #e02d2d; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
 
-    #game-over { 
-      margin-top: 1.5rem; 
-      font-size: 1.5rem; 
+    #game-over {
+      margin-top: 1.5rem;
+      font-size: 1.5rem;
       text-align: center;
       padding: 1rem;
       border-radius: 8px;
@@ -140,6 +140,14 @@
       display: block; /* filled at end */
       color: #eee;
     }
+    #game-over.win { color: #9effa8; }
+    #game-over.loss { color: #ff9ea0; }
+    body.light-mode #game-over {
+      background: rgba(0, 0, 0, 0.05);
+      color: #111;
+    }
+    body.light-mode #game-over.win { color: #000; }
+    body.light-mode #game-over.loss { color: #c62828; }
 
     #start-screen { 
       position: fixed; inset: 0; 
@@ -247,8 +255,15 @@
     .login-panel .external-links { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
     .login-panel .external-link { display: inline-flex; color: #00bcd4; font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
     .login-panel .external-link:hover { color: #ff9800; text-decoration: underline; }
-    .theme-toggle { margin-top: auto; padding: 0.65rem 1.2rem; border-radius: 999px; border: none; font-weight: 600; cursor: pointer; background: #333; color: #f5f5f5; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: transform 0.2s ease, background 0.2s ease; width: 100%; text-align: center; }
-    .theme-toggle:hover { transform: translateY(-1px); background: #3f3f3f; }
+    .theme-toggle { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; width: 100%; }
+    .theme-toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .theme-toggle-label { display: inline-flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 600; color: #f5f5f5; }
+    .theme-toggle-track { position: relative; width: 3.2rem; height: 1.6rem; border-radius: 999px; background: #3a3a3a; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2); transition: background 0.25s ease; }
+    .theme-toggle-thumb { position: absolute; top: 50%; left: 0.25rem; transform: translate(0, -50%); width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); transition: transform 0.25s ease; }
+    .theme-toggle-input:focus-visible + .theme-toggle-label .theme-toggle-track { box-shadow: 0 0 0 3px rgba(255, 59, 59, 0.35); }
+    .theme-toggle-input:checked + .theme-toggle-label .theme-toggle-track { background: #ff3b3b; }
+    .theme-toggle-input:checked + .theme-toggle-label .theme-toggle-thumb { transform: translate(1.45rem, -50%); }
+    .theme-toggle-text { font-size: 1rem; letter-spacing: 0.03em; }
     #logout-button { margin-top: 0.75rem; width: 100%; background: #ef5350; }
     #logout-button:hover { background: #e53935; }
     .login-hint { margin-top: 0.75rem; font-size: 0.9rem; color: #ccc; }
@@ -308,8 +323,11 @@
     body.light-mode .share-button.copy { background: #eceff1; color: #263238; }
     body.light-mode .tracker-char { background: #eceff1; color: #d84315; border-color: #cfd8dc; }
     body.light-mode .tracker-char.used { color: #90a4ae; }
-    body.light-mode .theme-toggle { background: #1976d2; color: #fff; box-shadow: 0 4px 12px rgba(25,118,210,0.25); }
-    body.light-mode .theme-toggle:hover { background: #1565c0; }
+    body.light-mode .theme-toggle-label { color: #1f1f1f; }
+    body.light-mode .theme-toggle-track { background: #b0bec5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05); }
+    body.light-mode .theme-toggle-input:checked + .theme-toggle-label .theme-toggle-track { background: #1976d2; }
+    body.light-mode .theme-toggle-input:checked + .theme-toggle-label .theme-toggle-thumb { box-shadow: 0 2px 6px rgba(25, 118, 210, 0.35); }
+    body.light-mode .theme-toggle-text { color: #1f1f1f; }
   </style>
 </head>
 <body>
@@ -355,7 +373,15 @@
       </div>
       <small class="streak-note">Increments when you log in during a new week (Sun–Sat, your local time).</small>
     </div>
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">Enable light mode</button>
+    <div class="theme-toggle">
+      <input id="theme-toggle-switch" class="theme-toggle-input" type="checkbox" role="switch" aria-checked="false" aria-labelledby="theme-toggle-text" />
+      <label for="theme-toggle-switch" class="theme-toggle-label">
+        <span class="theme-toggle-track" aria-hidden="true">
+          <span class="theme-toggle-thumb"></span>
+        </span>
+        <span class="theme-toggle-text" id="theme-toggle-text">Enable light mode</span>
+      </label>
+    </div>
   </aside>
 
   <h1>Gödle Hex</h1>
@@ -438,16 +464,18 @@
   <script>
     // ===== Theme Toggle =====
     (function(){
-      const toggleBtn = document.getElementById('theme-toggle');
-      if (!toggleBtn) return;
+      const toggleInput = document.getElementById('theme-toggle-switch');
+      const toggleText = document.getElementById('theme-toggle-text');
+      if (!toggleInput || !toggleText) return;
 
       const LIGHT_CLASS = 'light-mode';
       const STORAGE_KEY = 'ghx_light_mode';
 
       function applyMode(isLight){
         document.body.classList.toggle(LIGHT_CLASS, isLight);
-        toggleBtn.setAttribute('aria-pressed', String(isLight));
-        toggleBtn.textContent = isLight ? 'Disable light mode' : 'Enable light mode';
+        toggleInput.checked = isLight;
+        toggleInput.setAttribute('aria-checked', String(isLight));
+        toggleText.textContent = isLight ? 'Disable light mode' : 'Enable light mode';
       }
 
       let stored = null;
@@ -460,8 +488,8 @@
       const initial = stored === null ? prefersLight : stored === 'true';
       applyMode(initial);
 
-      toggleBtn.addEventListener('click', ()=>{
-        const isLight = !document.body.classList.contains(LIGHT_CLASS);
+      toggleInput.addEventListener('change', () => {
+        const isLight = toggleInput.checked;
         applyMode(isLight);
         try { localStorage.setItem(STORAGE_KEY, String(isLight)); } catch (err) { /* ignore storage failures */ }
       });
@@ -882,7 +910,14 @@
         const guess = values.map(v => (isNaN(v) ? v.toUpperCase() : Number(v)));
         const solved = guess.every((d, i) => d === code[i]);
         const finalTime = stopTimer();
-        gameOverDiv.innerHTML = solved ? `🎉 You cracked the code in ${finalTime}!` : `❌ Incorrect. The code was ${code.join("")}. Time: ${finalTime}`;
+        gameOverDiv.classList.remove('win', 'loss');
+        if (solved) {
+          gameOverDiv.textContent = `🎉 You cracked the code in ${finalTime}!`;
+          gameOverDiv.classList.add('win');
+        } else {
+          gameOverDiv.textContent = `❌ Incorrect. The code was ${code.join("")}. Time: ${finalTime}`;
+          gameOverDiv.classList.add('loss');
+        }
         submitBtn.disabled = true;
       }
     }
