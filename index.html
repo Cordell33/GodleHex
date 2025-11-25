@@ -664,6 +664,7 @@
     // ⏱ Timer helpers
     let startTime = null;
     let timerInterval = null;
+    let elapsedSeconds = 0;
 
     function formatSeconds(total) {
       const m = String(Math.floor(total / 60)).padStart(2, '0');
@@ -673,6 +674,7 @@
 
     function startTimer() {
       startTime = Date.now();
+      elapsedSeconds = 0;
       timerDiv.textContent = '⏱ 00:00';
       timerInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -682,8 +684,17 @@
 
     function stopTimer() {
       if (timerInterval) clearInterval(timerInterval);
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      return formatSeconds(elapsed);
+      elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      return formatSeconds(elapsedSeconds);
+    }
+
+    function getPerformanceRating(secondsTaken) {
+      if (secondsTaken < 60) return { badge: "💎", label: "Legendary speed" };
+      if (secondsTaken <= 300) return { badge: "⭐⭐⭐⭐⭐", label: "Blazing fast" };
+      if (secondsTaken <= 450) return { badge: "⭐⭐⭐⭐", label: "Swift solver" };
+      if (secondsTaken <= 495) return { badge: "⭐⭐⭐", label: "Solid pace" };
+      if (secondsTaken < 600) return { badge: "⭐⭐", label: "Keep practicing" };
+      return { badge: "⭐", label: "Persistence pays off" };
     }
 
     function renderQuestion() {
@@ -913,7 +924,8 @@
         const finalTime = stopTimer();
         gameOverDiv.classList.remove('win', 'loss');
         if (solved) {
-          gameOverDiv.textContent = `🎉 You cracked the code in ${finalTime}!`;
+          const rating = getPerformanceRating(elapsedSeconds);
+          gameOverDiv.textContent = `🎉 You cracked the code in ${finalTime}! ${rating.badge} ${rating.label}`;
           gameOverDiv.classList.add('win');
         } else {
           gameOverDiv.textContent = `❌ Incorrect. The code was ${code.join("")}. Time: ${finalTime}`;
