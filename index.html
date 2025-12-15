@@ -137,7 +137,7 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.06);
       animation: fadeIn 0.5s ease-in;
-      display: block; /* filled at end */
+      display: none; /* only shown after game ends */
       color: #eee;
     }
     #game-over.win { color: #9effa8; }
@@ -923,6 +923,7 @@
         const guess = values.map(v => (isNaN(v) ? v.toUpperCase() : Number(v)));
         const solved = guess.every((d, i) => d === code[i]);
         const finalTime = stopTimer();
+        gameOverDiv.style.display = 'block';
         gameOverDiv.classList.remove('win', 'loss');
         if (solved) {
           const rating = getPerformanceRating(elapsedSeconds);
@@ -956,6 +957,11 @@
 
     startButton.addEventListener("click", () => {
       startScreen.style.display = "none";
+      gameOverDiv.textContent = "";
+      gameOverDiv.classList.remove('win', 'loss');
+      gameOverDiv.style.display = 'none';
+      const shareResults = document.getElementById('share-results');
+      if (shareResults) shareResults.style.display = 'none';
       updateTracker();
       startTimer();
       renderQuestion();
