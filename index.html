@@ -362,17 +362,17 @@
   <div id="menu-backdrop" role="presentation"></div>
   <aside id="side-menu" aria-hidden="false" tabindex="-1">
     <h2>Game Menu</h2>
-    <p>Sign in to track your streak, then use the Start Game button below the board whenever you're ready to play.</p>
+    <p>You're signed in anonymously. Choose a username to track your streak, then use the Start Game button below the board whenever you're ready to play.</p>
     <div class="login-panel" aria-live="polite">
-      <form id="login-form">
-        <label for="username-input">Player username</label>
+      <form id="username-form">
+        <label id="username-label" for="username-input">Choose username</label>
         <div class="login-row">
           <input id="username-input" name="username" type="text" placeholder="Enter username" autocomplete="nickname" required />
-          <button type="submit" id="login-button">Log In</button>
+          <button type="submit" id="username-submit">Save</button>
         </div>
       </form>
-      <button id="logout-button" type="button" style="display: none;">Log Out</button>
-      <p class="login-hint">Your daily streak is saved per username on this device.</p>
+      <p id="username-message" class="login-hint" role="status" aria-live="polite"></p>
+      <p class="login-hint">Usernames are unique (3–15 letters, numbers, underscore) and saved to your account.</p>
       <ul class="external-links">
         <li><a class="external-link" href="https://cordell33.github.io/GodlePuzzle/" target="_blank" rel="noopener noreferrer">Godle (daily)</a></li>
         <li><a class="external-link" href="https://cordell33.github.io/Cordlle/" target="_blank" rel="noopener noreferrer">Cordlle (monthly)</a></li>
@@ -512,96 +512,172 @@
     })();
   </script>
 
-  <script>
-    // ===== Auth + Weekly Streak (Sun–Sat, no reset) =====
-    (function(){
-      const loginForm = document.getElementById('login-form');
-      const usernameInput = document.getElementById('username-input');
-      const loginBtn = document.getElementById('login-button');
-      const logoutBtn = document.getElementById('logout-button');
-      const authStatus = document.getElementById('auth-status');
-      const currentUserEl = document.getElementById('current-username');
-      const streakPanel = document.getElementById('streak-panel');
-      const streakCountEl = document.getElementById('streak-count');
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js";
 
-      let loggedInUser = null;
+    // ===== Firebase Auth + Username (anonymous) =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTw3KFARkVqwtatHaY5RAO_vZmFqZXG7g",
+      authDomain: "godlehex.firebaseapp.com",
+      projectId: "godlehex",
+      storageBucket: "godlehex.firebasestorage.app",
+      messagingSenderId: "127470990084",
+      appId: "1:127470990084:web:d020faea35f474e2689651",
+      measurementId: "G-JYVZLQMF95"
+    };
 
-      function storageKey(user){ return `ghx_user_${user}`; }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const functions = getFunctions(app);
 
-      function getWeekKey(date = new Date()){
-        // Sunday-based weeks (local time): key is Sunday-of-week anchored week number
-        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const day = d.getDay(); // 0=Sun..6=Sat
-        const sunday = new Date(d);
-        sunday.setDate(d.getDate() - day); // back to Sunday
-        const year = sunday.getFullYear();
-        const firstJan = new Date(year, 0, 1);
-        const firstJanDow = firstJan.getDay();
-        const firstSunday = new Date(firstJan);
-        firstSunday.setDate(firstJan.getDate() - firstJanDow); // Sunday on/before Jan 1
-        const diffDays = Math.floor((sunday - firstSunday) / 86400000);
-        const week = Math.floor(diffDays / 7) + 1;
-        return `${year}-W${String(week).padStart(2,'0')}`;
+    const usernameForm = document.getElementById('username-form');
+    const usernameInput = document.getElementById('username-input');
+    const usernameLabel = document.getElementById('username-label');
+    const usernameSubmit = document.getElementById('username-submit');
+    const usernameMessage = document.getElementById('username-message');
+    const authStatus = document.getElementById('auth-status');
+    const currentUserEl = document.getElementById('current-username');
+    const streakPanel = document.getElementById('streak-panel');
+    const streakCountEl = document.getElementById('streak-count');
+
+    const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,15}$/;
+    let activeUid = null;
+    let activeUsername = null;
+    let unsubscribeUser = null;
+
+    function storageKey(user){ return `ghx_user_${user}`; }
+
+    function getWeekKey(date = new Date()){
+      // Sunday-based weeks (local time): key is Sunday-of-week anchored week number
+      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const day = d.getDay(); // 0=Sun..6=Sat
+      const sunday = new Date(d);
+      sunday.setDate(d.getDate() - day); // back to Sunday
+      const year = sunday.getFullYear();
+      const firstJan = new Date(year, 0, 1);
+      const firstJanDow = firstJan.getDay();
+      const firstSunday = new Date(firstJan);
+      firstSunday.setDate(firstJan.getDate() - firstJanDow); // Sunday on/before Jan 1
+      const diffDays = Math.floor((sunday - firstSunday) / 86400000);
+      const week = Math.floor(diffDays / 7) + 1;
+      return `${year}-W${String(week).padStart(2,'0')}`;
+    }
+
+    // expose helpers for testing
+    window.__ghx_getWeekKey = getWeekKey;
+
+    function loadUser(user){
+      try { return JSON.parse(localStorage.getItem(storageKey(user))) || null; }
+      catch { return null; }
+    }
+    function saveUser(user, data){ localStorage.setItem(storageKey(user), JSON.stringify(data)); }
+
+    function updateStreakOnLogin(user){
+      const nowKey = getWeekKey();
+      let data = loadUser(user) || { streak: 0, lastWeek: null };
+      if (data.lastWeek !== nowKey) {
+        // new week detected → increment once, never reset for gaps
+        data.streak = (data.streak || 0) + 1;
+        data.lastWeek = nowKey;
       }
+      saveUser(user, data);
+      streakCountEl.textContent = String(data.streak || 0);
+    }
+    window.__ghx_updateStreakOnLogin = updateStreakOnLogin; // test hook
 
-      // expose helpers for testing
-      window.__ghx_getWeekKey = getWeekKey;
+    function setMessage(text, isError = false){
+      if (!usernameMessage) return;
+      usernameMessage.textContent = text || '';
+      usernameMessage.style.color = isError ? '#ff9ea0' : '#9effa8';
+    }
 
-      function loadUser(user){
-        try { return JSON.parse(localStorage.getItem(storageKey(user))) || null; }
-        catch { return null; }
-      }
-      function saveUser(user, data){ localStorage.setItem(storageKey(user), JSON.stringify(data)); }
+    function updateFormState(){
+      const hasUsername = Boolean(activeUsername);
+      if (usernameLabel) usernameLabel.textContent = hasUsername ? 'Change username' : 'Choose username';
+      if (usernameSubmit) usernameSubmit.textContent = hasUsername ? 'Change' : 'Save';
+      if (usernameInput) usernameInput.placeholder = hasUsername ? 'New username' : 'Enter username';
+    }
 
-      function updateStreakOnLogin(user){
-        const nowKey = getWeekKey();
-        let data = loadUser(user) || { streak: 0, lastWeek: null };
-        if (data.lastWeek !== nowKey) {
-          // new week detected → increment once, never reset for gaps
-          data.streak = (data.streak || 0) + 1;
-          data.lastWeek = nowKey;
-        }
-        saveUser(user, data);
-        streakCountEl.textContent = String(data.streak || 0);
-      }
-      window.__ghx_updateStreakOnLogin = updateStreakOnLogin; // test hook
-
-      function setLoggedInUI(user){
-        loggedInUser = user;
+    function setLoggedInUI(username){
+      activeUsername = username || null;
+      if (activeUsername) {
         authStatus.style.display = 'block';
-        currentUserEl.textContent = user;
+        currentUserEl.textContent = activeUsername;
         streakPanel.hidden = false;
-        loginForm.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-        const data = loadUser(user) || { streak: 0 };
+        updateStreakOnLogin(activeUsername);
+        const data = loadUser(activeUsername) || { streak: 0 };
         streakCountEl.textContent = String(data.streak || 0);
-      }
-      function setLoggedOutUI(){
-        loggedInUser = null;
+      } else {
         authStatus.style.display = 'none';
         streakPanel.hidden = true;
-        loginForm.style.display = 'block';
-        logoutBtn.style.display = 'none';
         currentUserEl.textContent = '';
       }
+      updateFormState();
+    }
 
-      loginForm.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const user = (usernameInput.value || '').trim();
-        if (!user) return;
-        updateStreakOnLogin(user);
-        setLoggedInUI(user);
-        localStorage.setItem('ghx_last_user', user);
+    function listenToUser(uid){
+      if (unsubscribeUser) unsubscribeUser();
+      const userRef = doc(db, 'users', uid);
+      unsubscribeUser = onSnapshot(userRef, (snap) => {
+        if (!snap.exists()) {
+          setLoggedInUI(null);
+          return;
+        }
+        const data = snap.data() || {};
+        setLoggedInUI(data.username || null);
+      }, () => {
+        setMessage('Unable to load username data.', true);
       });
-      logoutBtn.addEventListener('click', ()=>{ setLoggedOutUI(); });
+    }
 
-      // Prefill last username (no auto-increment)
-      const lastUser = localStorage.getItem('ghx_last_user');
-      if (lastUser) { usernameInput.value = lastUser; }
-    })();
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        activeUid = null;
+        setLoggedInUI(null);
+        return;
+      }
+      activeUid = user.uid;
+      listenToUser(user.uid);
+    });
+
+    signInAnonymously(auth).catch(() => {
+      setMessage('Unable to sign in. Please refresh the page.', true);
+    });
+
+    if (usernameForm) {
+      usernameForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const desired = (usernameInput.value || '').trim();
+        if (!USERNAME_REGEX.test(desired)) {
+          setMessage('Username must be 3–15 characters (letters, numbers, underscores).', true);
+          return;
+        }
+        if (!activeUid) {
+          setMessage('Signing in…', true);
+          return;
+        }
+        usernameSubmit.disabled = true;
+        setMessage('Saving username…');
+        try {
+          const renameUsername = httpsCallable(functions, 'renameUsername');
+          await renameUsername({ newUsername: desired });
+          usernameInput.value = '';
+          setMessage('Username updated ✅');
+        } catch (err) {
+          const message = err?.message || 'Unable to update username.';
+          setMessage(message, true);
+        } finally {
+          usernameSubmit.disabled = false;
+        }
+      });
+    }
 
     // ===== Game Logic =====
-      const pyramid = [1, 2, 3, 4, 5, 7];
+    const pyramid = [1, 2, 3, 4, 5, 7];
     const code =  [1, "D", 8, 5, "A", "C",0 ];
 
     const questions = [
