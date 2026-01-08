@@ -515,7 +515,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js";
 
     // ===== Firebase Auth + Username (anonymous) =====
@@ -675,6 +675,16 @@
         }
       });
     }
+
+    async function runFirebaseWriteTest() {
+      if (!activeUid) {
+        await signInAnonymously(auth);
+      }
+      const testRef = doc(db, 'test', 'ping');
+      await setDoc(testRef, { time: Date.now() });
+      console.log('Firebase write success');
+    }
+    window.runFirebaseWriteTest = runFirebaseWriteTest;
 
     // ===== Game Logic =====
     const pyramid = [1, 2, 3, 4, 5, 7];
