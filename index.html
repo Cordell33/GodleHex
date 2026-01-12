@@ -602,26 +602,26 @@
 
     // ===== Game Logic =====
       const pyramid = [1, 2, 3, 4, 5, 7];
-    const code =  [1, "D", 8, 5, "A", "C",0 ];
+    const code =  ["B", 0, 3, "F", "D", 7,"E" ];
 
     const questions = [
-      "(-1000) + (-99) + (-98) +... + 98 + 99 + 100 ",
-      "107 in hexadecimal",
-      "268.7 Kelvins → __°_ ",
-      "Pet; an animals raised by humans left by mother",
-      "The first 5 digits of e*π (_.____)  ",
+      "Gear opposite of reverse ",
+      "1905 millimeters ",
+      "Find the zeros, least to greatest; x^4 -9x^3 +28x^2 -36x +16",
+      "Music: use “Every good boy does fine” for line notes and ____ for spaces",
+      "The first five digits of ∫  8/(3e^2) dx from 6 to 7 ",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      [0],
-      [6,"B" ],
-      [2 , 4 , "F"],
-      ["C", "A", "D", "E"],
-      [8, 5, 3, 9, 7],
-     [1, "D", 8, 5, "A", "C",0 ]
+      ["D"],
+      [7, 5 ],
+      [1 , 2 , 4],
+      ["F", "A", "C", "E"],
+      [3, 6, 0, 8, 9],
+     ["B", 0, 3, "F", "D", 7,"E" ]
     ];
-
+    
     let currentStep = 0;
 
     const questionsDiv = document.getElementById("questions");
