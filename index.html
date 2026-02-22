@@ -228,6 +228,21 @@
       .questions { min-width: 100%; }
       h1 { font-size: 2.2rem; }
 
+      /* Mobile-only menu placement (right side, vertically centered) */
+      #menu-toggle {
+        left: auto;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      #menu-toggle:hover { transform: translateY(calc(-50% - 1px)); }
+
+      #side-menu {
+        left: auto;
+        right: 0;
+        box-shadow: -8px 0 24px rgba(0, 0, 0, 0.45);
+        transform: translateX(100%);
+      }
     }
 
     @media (max-width: 480px) {
