@@ -228,8 +228,15 @@
       .questions { min-width: 100%; }
       h1 { font-size: 2.2rem; }
 
-      /* Mobile-only menu placement (opens from right side) */
-      #menu-toggle { left: auto; right: 1rem; }
+      /* Mobile-only menu placement (right side, vertically centered) */
+      #menu-toggle {
+        left: auto;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      #menu-toggle:hover { transform: translateY(calc(-50% - 1px)); }
+
       #side-menu {
         left: auto;
         right: 0;
