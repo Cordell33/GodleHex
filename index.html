@@ -640,24 +640,24 @@
 
     // ===== Game Logic =====
 const pyramid = [1, 2, 3, 4, 5, 7];
-    const code =    [0, "A", 8, 5, "F" , "B", 4];
+    const code = ["A", 2, "B", 5, 0, 7, 8];
 
     const questions = [
-      "Opposite or reverse on a stick shaft",
-      "For y = 3x -1, pick all points that satisfy (A) (0,-3) (B) (0,-1) (C) (5,4) (D) (3,8) (E) (-2,-6) (F) (2,5) ", 
-      "A serve in tennis that is not touched by reliever’s racket and wins a point ",
-      "185D in hexadecimal is what in base 10? ",
-      " First 5 digits of ∫xe^(x²) dx from [0,1]",
+      "Pattern recognition: 1, B, 3, D, 5, _, 7, H…",
+      "The black king starting square in chess?",
+      "A counterpart to THC",
+      "Solve (a,b,c,d): a + c = 8, d - b = 1, c + 2d = a, c - d = 2",
+      "Convert 49,770 from base 10 to base 12 (A = 10, B = 11)",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      ["D"],
-      ["B","F" ],
-      ["A", "C", "E"],
-      [6, 2, 3, 7],
-      [8, 5, 9, 1, 4],
- [0, "A", 8, 5, "F" , "B", 4]
+      ["F"],
+      ["E", 8],
+      ["C", "B", "D"],
+      [5, 0, 3, 1],
+      [2, 4, 9, 7, 6],
+      ["A", 2, "B", 5, 0, 7, 8]
     ];
 
     let currentStep = 0;
