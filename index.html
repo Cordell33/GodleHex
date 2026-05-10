@@ -640,24 +640,24 @@
 
     // ===== Game Logic =====
 const pyramid = [1, 2, 3, 4, 5, 7];
-    const code =    [9, 7, 1, 0, 6 , "C", "E"];
+    const code =    ["B", 2, "F", 0, 1, 5, 9];
 
     const questions = [
-      "The biggest planet in the solar system: A) Earth B) Saturn C) Uranus D) Jupiter  ",
-      "100°  _ = 212°  _", 
-      "Complete  the pattern: 0A0, ___, 6I4, 9O6, 12U8, 15Y10",
-      "Find the average of  2.5 x10^4,  901 and 40  ",
-      "Convert 21598 from decimal to base 12 ",
+      "Slope between points (6,-3) and (7,6) ",
+      "Suffix added to the end of a word to indicate past tense",
+      "Write 319 (base 10) into hexadecimal ",
+      "43 A (amperes) times 15 sec. = ?  ",
+      "If a charge of 12468 Columbus flows through a wire in 6 sec. What is the current? ",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      ["D"],
-      ["C", "F"],
-      [3, "E", 2],
-      [8, 6, 4, 7],
-      [1, 0, 5, "B", "A"],
- [9, 7, 1, 0, 6 , "C", "E"]
+      [9],
+      ["E", "D"],
+      [1, 3, "F"],
+      [6, 4, 5, "C"],
+      [2, 0, 7, 8, "A"],
+      ["B", 2, "F", 0, 1, 5, 9]
     ];
 
     let currentStep = 0;
@@ -1050,9 +1050,9 @@ const pyramid = [1, 2, 3, 4, 5, 7];
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
 
       // New: feedback mapping helper tests (right-anchored)
-      const fb1 = computeFeedbackForRow(["F","B",8], 3); // should match last 3 of code
+      const fb1 = computeFeedbackForRow([1, 5, 9], 3); // should match last 3 of code
       console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
-      const fb2 = computeFeedbackForRow([7,"F"], 2); // both in code but not at last-2 exact spots
+      const fb2 = computeFeedbackForRow([2,"F"], 2); // both in code but not at last-2 exact spots
       console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
 
       // New: basic sharing output structure (safe to call anytime)
