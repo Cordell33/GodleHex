@@ -639,25 +639,25 @@
     })();
 
     // ===== Game Logic =====
-const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = ["D", "C", 4, 2, 8, 9, "B"];
+    const pyramid = [1, 2, 3, 4, 5, 7];
+    const code = [8, "B", 1, 2, "E", 3, 5];
 
     const questions = [
-      "Pick which is correct: If p →q and q → r then; (A) r→p (B) p→r (C) Both (D) Neither",
-      "Compute: 1/2 + 1/3  = _ / _",
-      "Pick all solutions for x^4 -3x^3 -9x^2 +23x -12 = 0; A) 1 B) 0 C)-3 D)-4 E) 4 F) 3",
-      "Convert 373.706 Kelvins",
-      "Slope of the tangent line of y = x^5 -10x^2 +7x at x = 10",
-      "Enter the unused Hex digit, followed by the code"
+      "Which choice is NOT a factor of 91? (A) 1 (B) 91 (C) 7 (D) 19 (E) 13",
+      "Evaluate ∫ |x| dx from 2 to 8.",
+      "What comes next: YA0, UB5, OC0, ID5, EE0, ___",
+      "What year was 2029 years ago? (Year 0 doesn’t exist.)",
+      "What is the sum of the first 113 odd numbers?",
+      "Enter the unused hex digit, followed by the code."
     ];
 
     const correctAnswers = [
-      ["B"],
-      [5, 6],
-      ["A", "C", "E"],
-      [2, 1, 3, "F"],
-      [4, 9, 8, 0, 7],
-      ["D", "C", 4, 2, 8, 9, "B"]
+      ["D"],
+      [3, 0],
+      ["A", "F", 5],
+      [4, "B", "C", "E"],
+      [1, 2, 7, 6, 9],
+      [8, "B", 1, 2, "E", 3, 5]
     ];
 
     let currentStep = 0;
@@ -1050,9 +1050,9 @@ const pyramid = [1, 2, 3, 4, 5, 7];
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
 
       // New: feedback mapping helper tests (right-anchored)
-      const fb1 = computeFeedbackForRow([1, 5, 9], 3); // should match last 3 of code
+      const fb1 = computeFeedbackForRow(["E", 3, 5], 3); // should match last 3 of code
       console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
-      const fb2 = computeFeedbackForRow([2,"F"], 2); // both in code but not at last-2 exact spots
+      const fb2 = computeFeedbackForRow([8,"B"], 2); // both in code but not at last-2 exact spots
       console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
 
       // New: basic sharing output structure (safe to call anytime)
