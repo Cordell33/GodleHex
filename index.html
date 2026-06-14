@@ -282,9 +282,12 @@
     .login-panel input[type="text"]:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2); }
     .login-panel button { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; background: #00bcd4; color: #fff; font-weight: 600; cursor: pointer; transition: background 0.2s ease; }
     .login-panel button:hover { background: #0097a7; }
-    .login-panel .external-links { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .login-panel .external-links-heading { margin: 1rem 0 0; color: #f5f5f5; font-weight: 700; }
+    .login-panel .external-links { list-style: none; margin: 0.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
     .login-panel .external-link { display: inline-flex; color: #00bcd4; font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
+    .login-panel .external-link.cordlle-link { color: #ffe34d; }
     .login-panel .external-link:hover { color: #ff9800; text-decoration: underline; }
+    .login-panel .external-link.cordlle-link:hover { color: #ffd000; }
     .theme-toggle { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; width: 100%; }
     .theme-toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
     .theme-toggle-label { display: inline-flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 600; color: #f5f5f5; }
@@ -360,8 +363,11 @@
     body.light-mode .login-panel input[type="text"]:focus { border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2); }
     body.light-mode .login-panel button { background: #1976d2; }
     body.light-mode .login-panel button:hover { background: #1565c0; }
+    body.light-mode .login-panel .external-links-heading { color: #1f1f1f; }
     body.light-mode .login-panel .external-link { color: #1976d2; }
+    body.light-mode .login-panel .external-link.cordlle-link { color: #b58900; }
     body.light-mode .login-panel .external-link:hover { color: #ef6c00; }
+    body.light-mode .login-panel .external-link.cordlle-link:hover { color: #8a6a00; }
     body.light-mode #logout-button { background: #e53935; }
     body.light-mode #logout-button:hover { background: #c62828; }
     body.light-mode .login-hint { color: #607d8b; }
@@ -412,9 +418,10 @@
       </form>
       <button id="logout-button" type="button" style="display: none;">Log Out</button>
       <p class="login-hint">Your daily streak is saved per username on this device.</p>
+      <p class="external-links-heading">Try More Games</p>
       <ul class="external-links">
         <li><a class="external-link" href="https://cordell33.github.io/GodlePuzzle/" target="_blank" rel="noopener noreferrer">Godle (daily)</a></li>
-        <li><a class="external-link" href="https://cordell33.github.io/Cordlle/" target="_blank" rel="noopener noreferrer">Cordlle (monthly)</a></li>
+        <li><a class="external-link cordlle-link" href="https://cordell33.github.io/Cordlle/" target="_blank" rel="noopener noreferrer">Cordlle (monthly)</a></li>
       </ul>
     </div>
     <div id="auth-status" class="auth-status" style="display:none;">Logged in as <strong id="current-username"></strong></div>
@@ -641,24 +648,24 @@
 
     // ===== Game Logic =====
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [8, "B", 1, 2, "E", 3, 5];
+    const code = [6, "C", 2, "B", "D", 3, "F"];
 
     const questions = [
-      "Which choice is NOT a factor of 91?\n (A) 1\n (B) 91\n (C) 7\n (D) 19\n (E) 13",
-      "Evaluate ∫ |x| dx from 2 to 8.",
-      "What comes next: YA0, UB5, OC0, ID5, EE0, ___",
-      "What year was 2029 years ago? (Year 0 doesn’t exist.)",
-      "What is the sum of the first 113 odd numbers?",
-      "Enter the unused hex digit, followed by the code."
+      "If 2^x=216 and 3^y=216, find the reciprocal of (1/x + 1/y)",
+      "Write 3 in trinary code",
+      "Convert 2287 from decimal into hexadecimal",
+      "Arrange from least to greatest:\n  A) Sum of all digits 1 through 10\n  B) The current Presidency's number\n  C) Half of 100\n  D) 7^2",
+      "Find the mean of:\n0\n80\n700\n111,000",
+      "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      ["D"],
-      [3, 0],
-      ["A", "F", 5],
-      [4, "B", "C", "E"],
-      [1, 2, 7, 6, 9],
-      [8, "B", 1, 2, "E", 3, 5]
+      [3],
+      [1, 0],
+      [8, "E", "F"],
+      ["B", "D", "C", "A"],
+      [2, 7, 9, 4, 5],
+      [6, "C", 2, "B", "D", 3, "F"]
     ];
 
     let currentStep = 0;
