@@ -664,24 +664,24 @@
 
     // ===== Game Logic =====
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [6, 1, "A", 7, "B", 2, "E"];
+    const code = [0, "E", 1, "C", 5, 7, "B"];
 
     const questions = [
-      "Solid black ball in pool, often the last to be pocketed",
-      "Kepler-452b is 5 times Earth's mass. If E = the mass of Earth, what is Kepler-452b's mass?",
-      "Water freezes at this temperature with the degree abbreviation",
-      "Solve and arrange from least to greatest:\n  3A - D = 4\n  A + 3C = B\n  B + D = 5\n  B = 0",
-      "Find the product of the roots for:\n17940 - 4717x - 469x^2 + 13x^3 + x^4 = 0",
+      "Pick the GREATEST value:\n A= 2^3\n B= 3^2\n C= e^e\n D= i^i\n E= π^π",
+      "Fill in the missing term:\n Z729, B243, X81, D27, V9, __, T1",
+      "Roman numerals: CMLXXII",
+      "If A= 2, B= 5, C= 6, D= 8:\n  9 8 9 1\n- ? ? ? ?\n--------\n  3 6 3 3\n What are the correct place values?",
+      "If you have 18 unique donuts, and you need to fill a box with a dozen, how many combinations are there?",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      [8],
-      [5, "E"],
-      [3, 2, "F"],
-      ["C", "B", "A", "D"],
-      [1, 7, 9, 4, 0],
-      [6, 1, "A", 7, "B", 2, "E"]
+      ["E"],
+      ["F", 3],
+      [9, 7, 2],
+      ["C", "A", "B", "D"],
+      [1, 8, 5, 6, 4],
+      [0, "E", 1, "C", 5, 7, "B"]
     ];
 
     let currentStep = 0;
