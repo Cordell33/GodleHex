@@ -664,24 +664,24 @@
 
     // ===== Game Logic =====
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [0, "E", 1, "C", 5, 7, "B"];
+    const code = ["E", 8, 3, 1, "A", "B", 6];
 
     const questions = [
-      "Pick the GREATEST value:\n A= 2^3\n B= 3^2\n C= e^e\n D= i^i\n E= π^π",
-      "Fill in the missing term:\n Z729, B243, X81, D27, V9, __, T1",
-      "Roman numerals: CMLXXII",
-      "If A= 2, B= 5, C= 6, D= 8:\n  9 8 9 1\n- ? ? ? ?\n--------\n  3 6 3 3\n What are the correct place values?",
-      "If you have 18 unique donuts, and you need to fill a box with a dozen, how many combinations are there?",
+      "What comes next: 55, 34, 21, 13, _ ",
+      "Before MP3 and digital downloads, this thin circle was used to stored data",
+      "Which values for x give integer points:\n(list from least to greatest)\n y = 1.2x - 5\n A) 0  B) 5  C) 5/6  D) -1  E) π  F) 15 ",
+      "Find the dot product: [ 24, 7, 25] · [33, 15, 8]",
+      "614, 725, 836 … find the 322nd term. ",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      ["E"],
-      ["F", 3],
-      [9, 7, 2],
-      ["C", "A", "B", "D"],
-      [1, 8, 5, 6, 4],
-      [0, "E", 1, "C", 5, 7, "B"]
+      [8],
+      ["C", "D"],
+      ["A", "B", "F"],
+      [1, 0, 9, 7],
+      [3, 6, 2, 4, 5],
+      ["E", 8, 3, 1, "A", "B", 6]
     ];
 
     let currentStep = 0;
@@ -1074,9 +1074,9 @@
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
 
       // New: feedback mapping helper tests (right-anchored)
-      const fb1 = computeFeedbackForRow(["E", 3, 5], 3); // should match last 3 of code
+      const fb1 = computeFeedbackForRow(["A", "B", 6], 3); // should match last 3 of code
       console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
-      const fb2 = computeFeedbackForRow([8,"B"], 2); // both in code but not at last-2 exact spots
+      const fb2 = computeFeedbackForRow([8,"E"], 2); // both in code but not at last-2 exact spots
       console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
 
       // New: basic sharing output structure (safe to call anytime)
