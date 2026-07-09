@@ -664,24 +664,24 @@
 
     // ===== Game Logic =====
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = ["E", 8, 3, 1, "A", "B", 6];
+    const code = ["D", 1, "C", 3, "A", 2, 5];
 
     const questions = [
-      "What comes next: 55, 34, 21, 13, _ ",
-      "Before MP3 and digital downloads, this thin circle was used to stored data",
-      "Which values for x give integer points:\n(list from least to greatest)\n y = 1.2x - 5\n A) 0  B) 5  C) 5/6  D) -1  E) π  F) 15 ",
-      "Find the dot product: [ 24, 7, 25] · [33, 15, 8]",
-      "614, 725, 836 … find the 322nd term. ",
+      "This letter denotes magnetic flux density in science ",
+      "Solve for all solutions (least to greatest): |x - 5| = 3",
+      "Solve for (x, y ,z):\n  x -y +z = 0\n  3x +y -4z = 1\n x -z = -1   ",
+      "The yellow ‘side’ is the opposite ___ to the white on a Rubik’s cube",
+      "Find the determinate:\n |33,  15,  32|\n |10, 16,  04|\n |19,  44,  37|  ",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      [8],
-      ["C", "D"],
-      ["A", "B", "F"],
-      [1, 0, 9, 7],
-      [3, 6, 2, 4, 5],
-      ["E", 8, 3, 1, "A", "B", 6]
+      ["B"],
+      [2, 8],
+      [4, 9, 5],
+      ["F", "A", "C", "E"],
+      [1, 3, 6, 7, 0],
+      ["D", 1, "C", 3, "A", 2, 5]
     ];
 
     let currentStep = 0;
@@ -1074,9 +1074,9 @@
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
 
       // New: feedback mapping helper tests (right-anchored)
-      const fb1 = computeFeedbackForRow(["A", "B", 6], 3); // should match last 3 of code
+      const fb1 = computeFeedbackForRow(["A", 2, 5], 3); // should match last 3 of code
       console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
-      const fb2 = computeFeedbackForRow([8,"E"], 2); // both in code but not at last-2 exact spots
+      const fb2 = computeFeedbackForRow([1,"D"], 2); // both in code but not at last-2 exact spots
       console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
 
       // New: basic sharing output structure (safe to call anytime)
