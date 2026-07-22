@@ -433,7 +433,7 @@
         </div>
       </form>
       <button id="logout-button" type="button" style="display: none;">Log Out</button>
-      <p class="login-hint">Your daily streak is saved per username on this device.</p>
+      <p class="login-hint">Your weekly streak is saved per username on this device.</p>
       <p class="external-links-heading">Try More Games</p>
       <ul class="external-links">
         <li><a class="external-link" href="https://cordell33.github.io/GodlePuzzle/" target="_blank" rel="noopener noreferrer">Godle (daily)</a></li>
@@ -665,23 +665,23 @@
     // ===== Game Logic =====
     
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [7, "E", 3, 1,  "A" , "B", 6];
+    const code = ["A", 6, "D", 2, 1, 9, "C"];
     const questions = [
-      "∫ 2x^3-x dx from 0 to 2 ",
-      " π /2 radians = __°", 
-      "Fill in the blanks so that this circle equation is true \n _ = (_÷ _)²π      ",
-      "Pick the values that equal π: \n A) 0!\n B) arccos(-1) in rad \n C) 4(1- 1/3 +1/5 -1/7+1/9…)\n D) √10 \n E) 180° in rad \n F) Circumference/diameter", 
-      "Fill in the missing numbers:  π = _._ _1 _9 2 6 5 3 5 _9",
+      "Tally marks are often measured in sets of what?",
+      "If one side of a triangle is squared and is \n equal to the sum of the squares of the other two,\n then one angle in the triangle is always __°",
+      "A gardening plot or a piece of furniture a common room is named after",
+      "One degree after the boiling point in the imperial system",
+      "Fill in the missing values \n ∫24x^3 +12x^2 -16x -7 dx = \n _x^4 +_x^3 -_x^2 -_ +_",
       "Enter the unused Hex digit, followed by the code"
     ];
 
     const correctAnswers = [
-      [6],
+      [5],
       [9, 0],
-      [ "A",  "D", 2],
-      ["B", "C", "E", "F"],
-      [3, 1, 4, 5, 8],
-      [7, "E", 3, 1,  "A" , "B", 6]
+      ["B", "E", "D"],
+      [2, 1, 3, "F"],
+      [6, 4, 8, 7, "C"],
+      ["A", 6, "D", 2, 1, 9, "C"]
     ];
 
     let currentStep = 0;
@@ -1074,9 +1074,9 @@
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
 
       // New: feedback mapping helper tests (right-anchored)
-      const fb1 = computeFeedbackForRow(["A", "B", 6], 3); // should match last 3 of code
+      const fb1 = computeFeedbackForRow([1, 9, "C"], 3); // should match last 3 of code
       console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
-      const fb2 = computeFeedbackForRow([7, "C"], 2); // both in code but not at last-2 exact spots
+      const fb2 = computeFeedbackForRow(["A", 6], 2); // both in code but not at last-2 exact spots
       console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
 
       // New: basic sharing output structure (safe to call anytime)
