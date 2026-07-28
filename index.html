@@ -158,32 +158,6 @@
     body.light-mode #game-over.win { color: #000; }
     body.light-mode #game-over.loss { color: #c62828; }
 
-    #start-screen { 
-      position: fixed; inset: 0; 
-      background: #121212; 
-      color: #eee; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      text-align: center; 
-      padding: 2rem; 
-      z-index: 999;
-      animation: fadeIn 0.5s ease-in;
-    }
-    #start-button { 
-      margin-top: 2rem; 
-      padding: 1rem 2rem; 
-      font-size: 1.3rem; 
-      cursor: pointer; 
-      background: #ff3b3b; /* red start button */
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-    #start-button:hover { background: #e02d2d; transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); }
     .mobile-landscape-message {
       display: none;
       margin: 1.5rem 0 -0.5rem;
@@ -230,7 +204,16 @@
     #copy-message { margin-top: 1rem; color: #00bcd4; display: none; animation: fadeIn 0.5s ease-in; }
     #share-results { margin-top: 2rem; display: none; text-align: center; animation: fadeIn 0.5s ease-in; }
 
-    footer { margin-top: 3rem; font-size: 0.9rem; color: #777; text-align: center; padding: 1.5rem; border-top: 1px solid #333; width: 100%; max-width: 600px; }
+    .how-to-play {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 2.5rem;
+      padding: 1.5rem;
+      border-top: 1px solid #333;
+    }
+    .how-to-play h2 { margin: 0 0 0.75rem; color: #ff3b3b; text-align: center; }
+    .how-to-play ul { margin: 0 auto; padding-left: 1.4rem; line-height: 1.6; }
+    footer { font-size: 0.9rem; color: #777; text-align: center; padding: 1.5rem; width: 100%; max-width: 600px; }
 
     @media (max-width: 600px) {
       body { padding: 1rem; }
@@ -370,7 +353,8 @@
     body.light-mode .cell.gray { background: #cfd8dc; border-color: #b0bec5; color: #37474f; }
     body.light-mode #submit { background: #1976d2; color: #fff; }
     body.light-mode #submit:hover { background: #1565c0; box-shadow: 0 4px 10px rgba(21, 101, 192, 0.25); }
-    body.light-mode #start-screen { background: rgba(245, 246, 249, 0.97); color: #1f1f1f; }
+    body.light-mode .how-to-play { border-top-color: #cfd8dc; }
+    body.light-mode .how-to-play h2 { color: #c62828; }
     body.light-mode #menu-toggle { background: #1976d2; color: #fff; }
     body.light-mode #menu-toggle:hover { background: #1565c0; }
     body.light-mode.menu-open #menu-toggle { background: #115293; color: #e3f2fd; }
@@ -409,24 +393,10 @@
   </style>
 </head>
 <body>
-  <div id="start-screen">
-    <h1>Welcome to Gödle Hex</h1>
-    <p>A puzzle that uses logic and math with the same rules as Gödle</p>
-    <ul style="text-align: left; max-width: 400px;">
-      <li>Start at the <strong>bottom</strong> row and work your way up.</li>
-      <li>Answer 5 questions using hexadecimal digits (0–9, A–F).</li>
-      <li>Green = correct digit & position; Yellow = correct digit, wrong position.</li>
-      <li>One digit won’t be used and is placed at the begining of the final 7-character row.</li>
-      <li>Good luck!</li>
-    </ul>
-    <p class="mobile-landscape-message"><strong>Play in landscape for a better User Interface</strong></p>
-    <button id="start-button">Start Game</button>
-  </div>
-
   <!-- Pull out menu modal -->
-  <button id="menu-toggle" type="button" aria-expanded="true" aria-controls="side-menu" aria-label="Toggle game menu">✕ Close</button>
+  <button id="menu-toggle" type="button" aria-expanded="false" aria-controls="side-menu" aria-label="Toggle game menu">☰ Menu</button>
   <div id="menu-backdrop" role="presentation"></div>
-  <aside id="side-menu" aria-hidden="false" tabindex="-1">
+  <aside id="side-menu" aria-hidden="true" tabindex="-1">
     <h2>Game Menu</h2>
     <p>Sign in to track your streak, then use the Start Game button below the board whenever you're ready to play.</p>
     <div class="login-panel" aria-live="polite">
@@ -469,7 +439,7 @@
     <div class="questions" id="questions"></div>
     <div class="guesses" id="guess-container"></div>
   </div>
-  <button id="submit">Submit Guess</button>
+  <button id="submit">Start Game</button>
   <div id="timer">⏱ 00:00</div>
   <div id="hex-digits-label"> Hex digits : </div>
   <div id="game-over"></div>
@@ -483,6 +453,17 @@
   </div>
   <div id="copy-message" style="display:none; text-align:center; margin-top:.5rem;">Copied to clipboard ✅</div>
   <div id="tracker"></div>
+  <section class="how-to-play" aria-labelledby="how-to-play-title">
+    <h2 id="how-to-play-title">How to play</h2>
+    <ul>
+      <li>Start at the <strong>bottom</strong> row and work your way up.</li>
+      <li>Answer 5 questions using hexadecimal digits (0–9, A–F).</li>
+      <li>Green = correct digit and position; Yellow = correct digit, wrong position.</li>
+      <li>One digit won’t be used and is placed at the beginning of the final 7-character row.</li>
+      <li>Good luck!</li>
+    </ul>
+    <p class="mobile-landscape-message"><strong>Play in landscape for a better user interface.</strong></p>
+  </section>
   <footer>© 2026 Godle Games LLC</footer>
 
   <script>
@@ -695,11 +676,10 @@
     const guessContainer = document.getElementById("guess-container");
     const submitBtn = document.getElementById("submit");
     const gameOverDiv = document.getElementById("game-over");
-    const startScreen = document.getElementById("start-screen");
-    const startButton = document.getElementById("start-button");
     const trackerDiv = document.getElementById("tracker");
     const timerDiv = document.getElementById("timer");
 
+    let gameStarted = false;
     let usedCharacters = new Set();
     let questionElements = [];
 
@@ -1018,12 +998,31 @@
       }
     }
 
-    submitBtn.addEventListener("click", attemptSubmit);
+    function startGame() {
+      if (gameStarted) return;
+      gameStarted = true;
+      submitBtn.textContent = "Submit Guess";
+      gameOverDiv.textContent = "";
+      gameOverDiv.classList.remove('win', 'loss');
+      gameOverDiv.style.display = 'none';
+      const shareResults = document.getElementById('share-results');
+      if (shareResults) shareResults.style.display = 'none';
+      updateTracker();
+      startTimer();
+      renderQuestion();
+    }
+
+    updateTracker();
+
+    submitBtn.addEventListener("click", () => {
+      if (!gameStarted) startGame();
+      else attemptSubmit();
+    });
 
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" || event.repeat) return;
       if (submitBtn.disabled) return;
-      if (startScreen && startScreen.style.display !== "none") return;
+      if (!gameStarted) return;
       if (event.target && event.target.closest && event.target.closest('#side-menu')) return;
 
       const hasInputs = getActiveInputs().length > 0;
@@ -1034,18 +1033,6 @@
 
       event.preventDefault();
       attemptSubmit();
-    });
-
-    startButton.addEventListener("click", () => {
-      startScreen.style.display = "none";
-      gameOverDiv.textContent = "";
-      gameOverDiv.classList.remove('win', 'loss');
-      gameOverDiv.style.display = 'none';
-      const shareResults = document.getElementById('share-results');
-      if (shareResults) shareResults.style.display = 'none';
-      updateTracker();
-      startTimer();
-      renderQuestion();
     });
 
     /* ==================
