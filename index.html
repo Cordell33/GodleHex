@@ -107,8 +107,9 @@
       transform: scale(1.05);
     }
     .cell.yellow { 
-      background: #ffe34d; /* brighter yellow */
-      border-color: #d1a200;
+      /* Inputs cannot reliably render ::after, so draw the circle as a background layer. */
+      background: radial-gradient(circle at center, #ffe34d 0 35%, transparent 36%), #222;
+      border-color: #444;
       color: #241c00;
       transform: scale(1.05);
     }
@@ -349,7 +350,7 @@
     body.light-mode .question-result { color: #c62828; }
     body.light-mode .cell { background: #ffffff; border-color: #cfd8dc; color: #263238; }
     body.light-mode .cell.green { background: #81c784; border-color: #4caf50; color: #0a2510; }
-    body.light-mode .cell.yellow { background: #fff176; border-color: #fdd835; color: #4a3d00; }
+    body.light-mode .cell.yellow { background: radial-gradient(circle at center, #fff176 0 35%, transparent 36%), #ffffff; border-color: #cfd8dc; color: #4a3d00; }
     body.light-mode .cell.gray { background: #cfd8dc; border-color: #b0bec5; color: #37474f; }
     body.light-mode #submit { background: #1976d2; color: #fff; }
     body.light-mode #submit:hover { background: #1565c0; box-shadow: 0 4px 10px rgba(21, 101, 192, 0.25); }
