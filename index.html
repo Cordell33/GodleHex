@@ -215,6 +215,8 @@
     .how-to-play h2 { margin: 0 0 0.75rem; color: #ff3b3b; text-align: center; }
     .how-to-play ul { margin: 0 auto; padding-left: 1.4rem; line-height: 1.6; }
     footer { font-size: 0.9rem; color: #777; text-align: center; padding: 1.5rem; width: 100%; max-width: 600px; }
+    footer a { display: inline-block; margin-bottom: 0.5rem; color: #ff9ea0; font-weight: 700; }
+    footer a:hover { color: #fff; }
 
     @media (max-width: 600px) {
       body { padding: 1rem; }
@@ -383,6 +385,8 @@
     body.light-mode .auth-status { color: #37474f; }
     body.light-mode #timer { color: #c62828; }
     body.light-mode footer { color: #607d8b; border-top-color: #cfd8dc; }
+    body.light-mode footer a { color: #c62828; }
+    body.light-mode footer a:hover { color: #8e0000; }
     body.light-mode .share-button.copy { background: #eceff1; color: #263238; }
     body.light-mode .tracker-char { background: #eceff1; color: #d84315; border-color: #cfd8dc; }
     body.light-mode .tracker-char.used { color: #90a4ae; }
@@ -465,7 +469,10 @@
     </ul>
     <p class="mobile-landscape-message"><strong>Play in landscape for a better user interface.</strong></p>
   </section>
-  <footer>© 2026 Godle Games LLC</footer>
+  <footer>
+    <a href="https://www.amazon.com/stores/Cordell-L-Booth/author/B0H1NSWZZ7?ref=ap_rdr&amp;shoppingPortalEnabled=true&amp;ccs_id=a33bf13b-9bab-463e-872b-e48846accf2a" target="_blank" rel="noopener noreferrer">Book Coming Soon</a>
+    <div>© 2026 Godle Games LLC</div>
+  </footer>
 
   <script>
     // ===== Slide Menu Controller =====
@@ -652,23 +659,23 @@
     // ===== Game Logic =====
     
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = ["F", "B", 3, 6, 2, 8, 0];
+    const code = ["C", 8, 1, "B", 3, "D", 7];
     const questions = [
-      "In cooking, there are this many ‘Mother’ sauces?",
-      "If middle C is about 523 hz, what note roughly corresponds to 440 hz?",
-      "The vitamin Cobalamin, used to make healthy nerve tissues and brain function.",
-      "The four consecutive integers whose product minus their sum equals 2994.",
-      "Convert 195,510 into base 15. \n (A = 10, B = 11, C = 12…)",
-      "Enter the unused Hex character, followed by the code"
+      "How many sides does a hexagon have?",
+      "What is the area, rounded to the nearest whole number, of a triangle with sides of lengths 16 and 10 and an included angle of 36°?",
+      "Which government agency (abbreviation) protects public health by ensuring the safety and efficacy of food, cosmetics, and medicine?",
+      "Pattern recognition: \n Y10F0, \n U8E5, \n O6D0, \n I4C5, \n ______, \n A0A5.",
+      "Solve for ABCDE: \n ABCDE × C = EEABE",
+      "Enter the unused hexadecimal character, followed by the code."
     ];
 
     const correctAnswers = [
-      [5],
-      ["A", 4],
-      ["B", 1, 2],
-      [6, 7, 8, 9],
-      [3, "C", "D", "E", 0],
-      ["F", "B", 3, 6, 2, 8, 0]
+      [6],
+      [4, 7],
+      ["F", "D", "A"],
+      ["E", 2, "B", 0],
+      [1, 8, 3, 9, 5],
+      ["C", 8, 1, "B", 3, "D", 7]
     ];
 
     let currentStep = 0;
