@@ -659,23 +659,23 @@
     // ===== Game Logic =====
     
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [4, 1, 7, 2, "E", 8, "C"];
+    const code = ["D", 2, 3, "F", "B", 8, 4];
     const questions = [
-      "Which continent has the most counties \n A) The Americas (combined) \n B) Asia \n C) Africa \n D) Europe ",
-      "∫(x + 3)dx from 0 to 10 .",
-      "Convert 214 into duodecimal (base 12, A =10, B =11) .",
-      "Solve the system (w,x,y,z):\n w+1=x \n z-y=x \n 2x=y \n 3w+y=z+x .",
-      "Convert 507,375 into hexadecimal.",
+      "What is the slope between the points (0,3) and (-2, -5)",
+      "Evaluate ∫2x dx  from 0 to 5.",
+      "Convert 2,841 from decimal to hexadecimal.",
+      "What four-letter word describes one flat polygonal surface of a polyhedron?",
+      "How many color combinations can you make by picking six markers from a 20 Crayon set?",
       "Enter the unused Hex character, followed by the code"
     ];
 
     const correctAnswers = [
-      ["C"],
-      [8, 0],
-      [1, 5, "A"],
-      [2, 3, 6, 9],
-      [7, "B", "D", "E", "F"],
-      [4, 1, 7, 2, "E", 8, "C"]
+      [4],
+      [2, 5],
+      ["B", 1, 9],
+      ["F", "A", "C", "E"],
+      [3, 8, 7, 6, 0],
+      ["D", 2, 3, "F", "B", 8, 4]
     ];
 
     let currentStep = 0;
@@ -1074,9 +1074,9 @@
       console.assert(wkSun2 === wkFri, 'Sunday and following Friday should share the same week key');
 
       // New: feedback mapping helper tests (right-anchored)
-      const fb1 = computeFeedbackForRow([6, 5, "E"], 3); // should match last 3 of code
+      const fb1 = computeFeedbackForRow(code.slice(-3), 3); // should match last 3 of code
       console.assert(JSON.stringify(fb1) === JSON.stringify(["green","green","green"]), 'Right-anchored last 3 should be all green');
-      const fb2 = computeFeedbackForRow(["A", 6], 2); // both in code but not at last-2 exact spots
+      const fb2 = computeFeedbackForRow(code.slice(0, 2), 2); // both in code but not at last-2 exact spots
       console.assert(fb2.every(c => c === 'yellow' || c === 'green'), 'Digits from code should not be gray');
 
       // New: basic sharing output structure (safe to call anytime)
