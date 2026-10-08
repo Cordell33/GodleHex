@@ -446,7 +446,7 @@
   </div>
   <button id="submit">Start Game</button>
   <div id="timer">⏱ 00:00</div>
-  <div id="hex-digits-label"> Hex digits : </div>
+  <div id="hex-digits-label"> Characters : </div>
   <div id="game-over"></div>
   <!-- Share results UI (appears after game over) -->
   <div id="share-results" class="share-buttons" style="display:none;">
@@ -462,7 +462,7 @@
     <h2 id="how-to-play-title">How to play</h2>
     <ul>
       <li>Start at the <strong>bottom</strong> row and work your way up.</li>
-      <li>Answer 5 questions using hexadecimal digits (0–9, A–F).</li>
+      <li>Answer 5 questions using the characters in this puzzle’s bank.</li>
       <li>Green = correct digit and position; Yellow = correct digit, wrong position.</li>
       <li>One digit won’t be used and is placed at the beginning of the final 7-character row.</li>
       <li>Good luck!</li>
@@ -658,6 +658,18 @@
 
     // ===== Game Logic =====
     
+    // Puzzle-specific bank: all ten digits plus six uppercase letters or keyboard symbols.
+    const characterBank = [
+      "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+      "A", "B", "C", "D", "E", "F"
+    ];
+    const normalizeCharacter = value => String(value).toUpperCase();
+    const characterBankSet = new Set(characterBank.map(normalizeCharacter));
+    function sanitizeCharacter(value) {
+      return Array.from(normalizeCharacter(value))
+        .filter(char => characterBankSet.has(char)).slice(0, 1).join("");
+    }
+
     const pyramid = [1, 2, 3, 4, 5, 7];
     const code = ["F", 1, 4, 5, "A", 6, 7];
     const questions = [
@@ -670,7 +682,7 @@
         "y + z = 14\n" +
         "z - w = 6",
       "Convert 88,509 from decimal to hexadecimal.",
-      "Enter the unused Hex character, followed by the code"
+      "Enter the unused character, followed by the code"
     ];
 
     const correctAnswers = [
@@ -681,6 +693,48 @@
       [1, 5, 9, "B", "D"],
       ["F", 1, 4, 5, "A", 6, 7]
     ];
+
+    function validatePuzzleData(bank = characterBank, answers = correctAnswers, finalRow = code) {
+      const errors = [];
+      const bankChars = Array.isArray(bank) ? bank.map(normalizeCharacter) : [];
+      const bankSet = new Set(bankChars);
+      if (bankChars.length !== 16 || bankSet.size !== 16 ||
+          bankChars.some(char => char.length !== 1 || char.charCodeAt(0) < 33 || char.charCodeAt(0) > 126)) {
+        errors.push("characterBank must contain exactly 16 unique single characters (uppercase letters, digits, or keyboard symbols).");
+      }
+      if (!Array.isArray(bank) || bank.some(char => typeof char !== "string" || char !== normalizeCharacter(char)) ||
+          !Array.from("0123456789").every(char => bankSet.has(char))) {
+        errors.push("characterBank must contain digits 0–9 and six additional uppercase letters or keyboard symbols.");
+      }
+      const rows = answers.slice(0, 5).map(row => row.map(normalizeCharacter));
+      if (rows.length !== 5 || rows.some((row, i) => row.length !== i + 1)) {
+        errors.push("Q1–Q5 must have answer lengths 1, 2, 3, 4, and 5.");
+      }
+      answers.forEach((row, i) => {
+        if (row.some(char => !bankSet.has(normalizeCharacter(char)))) {
+          errors.push(`Q${i + 1} contains a character outside characterBank.`);
+        }
+      });
+      const used = rows.flat();
+      if (used.length !== 15 || new Set(used).size !== 15 || used.some(char => !bankSet.has(char))) {
+        errors.push("Q1–Q5 must collectively use exactly 15 unique bank characters.");
+      }
+      if (new Set(used).size !== used.length) errors.push("A character is repeated in Q1–Q5.");
+      const unused = bankChars.filter(char => !used.includes(char));
+      const finalChars = finalRow.map(normalizeCharacter);
+      if (unused.length !== 1 || finalChars[0] !== unused[0] ||
+          normalizeCharacter(answers[5]?.[0]) !== unused[0]) {
+        errors.push("The final row must start with the one unused bank character.");
+      }
+      if (finalChars.length !== 7 || finalChars.some(char => !bankSet.has(char)) ||
+          answers[5]?.length !== 7 || answers[5].some((char, i) => normalizeCharacter(char) !== finalChars[i])) {
+        errors.push("The final answer must match code: unused character followed by the six-character code.");
+      }
+      errors.forEach(error => console.error(`[Gödle Hex puzzle] ${error}`));
+      return errors.length === 0;
+    }
+
+    validatePuzzleData();
 
     let currentStep = 0;
 
@@ -695,7 +749,6 @@
     let usedCharacters = new Set();
     let questionElements = [];
 
-    const hexChars = [...Array(10).keys()].map(String).concat(["A","B","C","D","E","F"]);
     function handleTrackerChar(char) {
       const activeInputs = getActiveInputs();
       if (!activeInputs.length) return;
@@ -708,7 +761,7 @@
 
       if (!target) return;
 
-      target.value = char.toUpperCase();
+      target.value = normalizeCharacter(char);
       target.dispatchEvent(new Event("input", { bubbles: true }));
       if (typeof target.focus === "function") {
         target.focus();
@@ -717,7 +770,7 @@
 
     function updateTracker() {
       trackerDiv.innerHTML = "";
-      hexChars.forEach(char => {
+      characterBank.forEach(char => {
         const span = document.createElement("span");
         span.className = "tracker-char" + (usedCharacters.has(char) ? " used" : "");
         span.textContent = char;
@@ -802,7 +855,7 @@
         input.type = "text";
         input.autocapitalize = "characters";
         input.addEventListener("input", (e) => {
-          input.value = input.value.toUpperCase().replace(/[^0-9A-F]/g, "");
+          input.value = sanitizeCharacter(input.value);
           if (e.target.value.length === 1 && i < pyramid[currentStep] - 1) {
             rowDiv.children[i + 1].focus();
           }
@@ -835,10 +888,10 @@
 
     // Pure helper for tests and feedback generation
     function computeFeedbackForRow(inputDigits, rowLen) {
-      const codeUpper = code.map(x => String(x).toUpperCase());
+      const codeUpper = code.map(normalizeCharacter);
       const offset = Math.max(0, codeUpper.length - rowLen);
       return inputDigits.map((digit, i) => {
-        const d = String(digit).toUpperCase();
+        const d = normalizeCharacter(digit);
         const target = codeUpper[offset + i];
         if (target === d) return "green";
         if (codeUpper.includes(d)) return "yellow";
@@ -847,12 +900,11 @@
     }
 
     function evaluateRow(values, rowDiv) {
-      const inputDigits = values.map(v => (isNaN(v) ? v.toUpperCase() : Number(v)));
+      const inputDigits = values.map(normalizeCharacter);
       const expected = correctAnswers[currentStep];
 
       const isCorrect = inputDigits.length === expected.length && inputDigits.every((val, i) => {
-        const exp = expected[i];
-        return (typeof exp === "string") ? String(val).toUpperCase() === exp.toUpperCase() : val === exp;
+        return characterBankSet.has(val) && val === normalizeCharacter(expected[i]);
       });
 
       if (!isCorrect) { shakeRow(rowDiv); return false; }
@@ -869,7 +921,7 @@
         input.disabled = true;
       });
 
-      inputDigits.forEach(d => usedCharacters.add(String(d).toUpperCase()));
+      inputDigits.forEach(d => usedCharacters.add(normalizeCharacter(d)));
       updateTracker();
       return true;
     }
@@ -993,8 +1045,8 @@
       if (currentStep < pyramid.length) {
         renderQuestion();
       } else {
-        const guess = values.map(v => (isNaN(v) ? v.toUpperCase() : Number(v)));
-        const solved = guess.every((d, i) => d === code[i]);
+        const guess = values.map(normalizeCharacter);
+        const solved = guess.every((d, i) => d === normalizeCharacter(code[i]));
         const finalTime = stopTimer();
         gameOverDiv.style.display = 'block';
         gameOverDiv.classList.remove('win', 'loss');
