@@ -526,8 +526,8 @@
     <ul>
       <li>Start at the <strong>bottom</strong> row and work your way up.</li>
       <li>Answer 5 questions using the characters in this puzzle’s bank.</li>
-      <li>Green = correct digit and position; Yellow = correct digit, wrong position.</li>
-      <li>One digit won’t be used and is placed at the beginning of the final 7-character row.</li>
+      <li>Green = correct character and position; Yellow = correct character, wrong position; Gray = character absent from the code.</li>
+      <li>One character won’t be used and is placed at the beginning of the final 7-character row.</li>
       <li>Good luck!</li>
     </ul>
     <p class="mobile-landscape-message"><strong>Play in landscape for a better user interface.</strong></p>
@@ -738,10 +738,7 @@
     // ===== Game Logic =====
     
     // Puzzle-specific bank: all ten digits plus six uppercase letters or keyboard symbols.
-    const characterBank = [
-  "0","1","2","3","4","5","6","7","8","9",
-  "#","K","O","D","N","A"
-];
+    const characterBank = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "!", "%", "B", "C", "O", "T"];
     const normalizeCharacter = value => String(value).toUpperCase();
     const characterBankSet = new Set(characterBank.map(normalizeCharacter));
     function sanitizeCharacter(value) {
@@ -750,31 +747,52 @@
     }
 
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = [4, "#", 2, 5, "D", "K", 1];
+    const code = ["B", "9", "O", "5", "T", "!", "%"];
 
-const questions = [
-  "An octothorpe or number symbol often called a hashtag.",
-
-  "A common way a boxing match ends early.",
-
-  "Three-letter abbreviation for deoxyribonucleic acid.",
-
-  "Find the determinant:\n" +
-  "| 75  06 |\n" +
-  "| 11  69 |",
-
-  "Find the area of a triangle with base 218 units and height 242 units.",
-
-  "Enter the unused character, followed by the code"
+    const questions = [
+  "Enter the symbol that means 'per hundred.'",
+  "Write 720 using factorial notation.",
+  "Solve the system. Enter the values of a, b, and c in that order:\nb − c = a\n4a + 1 = b\n4a − 1 = c",
+  "Find the slope of the tangent line at x = 9 for the function:\ny = 2x⁴ − x³ + 12x² − x + 9",
+  "Enter Halloween's date as a three-letter month abbreviation followed by the two-digit day (e.g., JAN01).",
+  "Enter the unused character, followed by the six-character code."
 ];
 
-const correctAnswers = [
-  ["#"],
-  ["K", "O"],
-  ["D", "N", "A"],
-  [5, 1, 0, 9],
-  [2, 6, 3, 7, 8],
-  [4, "#", 2, 5, "D", "K", 1]
+    const correctAnswers = [
+  [
+    "%"
+  ],
+  [
+    "6",
+    "!"
+  ],
+  [
+    "2",
+    "9",
+    "7"
+  ],
+  [
+    "5",
+    "8",
+    "0",
+    "4"
+  ],
+  [
+    "O",
+    "C",
+    "T",
+    "3",
+    "1"
+  ],
+  [
+    "B",
+    "9",
+    "O",
+    "5",
+    "T",
+    "!",
+    "%"
+  ]
 ];
 
     function validatePuzzleData(bank = characterBank, answers = correctAnswers, finalRow = code) {
@@ -845,10 +863,10 @@ const correctAnswers = [
       if (!target) return;
 
       target.value = normalizeCharacter(char);
-      target.dispatchEvent(new Event("input", { bubbles: true }));
       if (typeof target.focus === "function") {
         target.focus();
       }
+      target.dispatchEvent(new Event("input", { bubbles: true }));
     }
 
     function updateTracker() {
