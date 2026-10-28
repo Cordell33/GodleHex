@@ -737,8 +737,49 @@
 
     // ===== Game Logic =====
     
-    // Puzzle-specific bank: all ten digits plus six uppercase letters or keyboard symbols.
-    const characterBank = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "!", "%", "B", "C", "O", "T"];
+    // ===== Scheduled weekly puzzle release =====
+    // 2026-11-01 00:00 in Pittsburgh/New York is 2026-11-01 04:00 UTC (EDT).
+    // Keep the Halloween puzzle active until then; new games load the November puzzle.
+    const NEXT_PUZZLE_RELEASE_UTC = Date.parse("2026-11-01T04:00:00Z");
+
+    const halloweenPuzzle = {
+      id: "halloween-2026-10-25",
+      bank: ["0","1","2","3","4","5","6","7","8","9","!","%","B","C","O","T"],
+      code: ["B","9","O","5","T","!","%"],
+      questions: [
+        "Enter the symbol that means 'per hundred.'",
+        "Write 720 using factorial notation.",
+        "Solve the system. Enter the values of a, b, and c in that order:\nb − c = a\n4a + 1 = b\n4a − 1 = c",
+        "Find the slope of the tangent line at x = 9 for the function:\ny = 2x⁴ − x³ + 12x² − x + 9",
+        "Enter Halloween's date as a three-letter month abbreviation followed by the two-digit day (e.g., JAN01).",
+        "Enter the unused character, followed by the six-character code."
+      ],
+      answers: [
+        ["%"], ["6","!"], ["2","9","7"], ["5","8","0","4"],
+        ["O","C","T","3","1"], ["B","9","O","5","T","!","%"]
+      ]
+    };
+
+    const novemberPuzzle = {
+      id: "symbols-chemistry-2026-11-01",
+      bank: ["0","1","2","3","4","5","6","7","8","9","!","A","C","H","O","S"],
+      code: ["8","7","H","5","1","A","!"],
+      questions: [
+        "Which symbol denotes the factorial operation in mathematics?",
+        "What two-letter abbreviation stands for alternating current?",
+        "A rectangular grid has 7 rows and 15 columns. How many 1 × 1 cells does it contain?",
+        "Evaluate 86².",
+        "Write the chemical formula for sulfuric acid.",
+        "Enter the unused character, followed by the six-character code."
+      ],
+      answers: [
+        ["!"], ["A","C"], ["1","0","5"], ["7","3","9","6"],
+        ["H","2","S","O","4"], ["8","7","H","5","1","A","!"]
+      ]
+    };
+
+    const activePuzzle = Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle;
+    const characterBank = activePuzzle.bank;
     const normalizeCharacter = value => String(value).toUpperCase();
     const characterBankSet = new Set(characterBank.map(normalizeCharacter));
     function sanitizeCharacter(value) {
@@ -747,53 +788,15 @@
     }
 
     const pyramid = [1, 2, 3, 4, 5, 7];
-    const code = ["B", "9", "O", "5", "T", "!", "%"];
+    const code = activePuzzle.code;
+    const questions = activePuzzle.questions;
+    const correctAnswers = activePuzzle.answers;
 
-    const questions = [
-  "Enter the symbol that means 'per hundred.'",
-  "Write 720 using factorial notation.",
-  "Solve the system. Enter the values of a, b, and c in that order:\nb − c = a\n4a + 1 = b\n4a − 1 = c",
-  "Find the slope of the tangent line at x = 9 for the function:\ny = 2x⁴ − x³ + 12x² − x + 9",
-  "Enter Halloween's date as a three-letter month abbreviation followed by the two-digit day (e.g., JAN01).",
-  "Enter the unused character, followed by the six-character code."
-];
-
-    const correctAnswers = [
-  [
-    "%"
-  ],
-  [
-    "6",
-    "!"
-  ],
-  [
-    "2",
-    "9",
-    "7"
-  ],
-  [
-    "5",
-    "8",
-    "0",
-    "4"
-  ],
-  [
-    "O",
-    "C",
-    "T",
-    "3",
-    "1"
-  ],
-  [
-    "B",
-    "9",
-    "O",
-    "5",
-    "T",
-    "!",
-    "%"
-  ]
-];
+    // An already-open tab switches to the new weekly puzzle at midnight, too.
+    // The release is selected by an absolute timestamp, not the player's time zone.
+    if (Date.now() < NEXT_PUZZLE_RELEASE_UTC) {
+      setTimeout(() => window.location.reload(), NEXT_PUZZLE_RELEASE_UTC - Date.now() + 250);
+    }
 
     function validatePuzzleData(bank = characterBank, answers = correctAnswers, finalRow = code) {
       const errors = [];
