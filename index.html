@@ -741,6 +741,8 @@
     // 2026-11-01 00:00 in Pittsburgh/New York is 2026-11-01 04:00 UTC (EDT).
     // Keep the Halloween puzzle active until then; new games load the November puzzle.
     const NEXT_PUZZLE_RELEASE_UTC = Date.parse("2026-11-01T04:00:00Z");
+    // November 8 is after the daylight-saving transition: midnight EST = 05:00 UTC.
+    const PRIME_PATTERNS_RELEASE_UTC = Date.parse("2026-11-08T05:00:00Z");
 
     const halloweenPuzzle = {
       id: "halloween-2026-10-25",
@@ -778,7 +780,27 @@
       ]
     };
 
-    const activePuzzle = Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle;
+    const primePatternsPuzzle = {
+      id: "prime-patterns-2026-11-08",
+      bank: ["0","1","2","3","4","5","6","7","8","9","P","R","I","M","E","X"],
+      code: ["X","1","P","8","M","2","7"],
+      questions: [
+        "How many prime numbers are less than 18?",
+        "In how many ways can four distinct books be arranged on a shelf?",
+        "Find the least common multiple of 3, 5, and 7.",
+        "Find the determinant of the matrix:\n| 93  94 |\n|  1  91 |",
+        "What five-letter word describes an integer greater than 1 with exactly two positive divisors?",
+        "Enter the unused character, followed by the six-character code."
+      ],
+      answers: [
+        ["7"], ["2","4"], ["1","0","5"], ["8","3","6","9"],
+        ["P","R","I","M","E"], ["X","1","P","8","M","2","7"]
+      ]
+    };
+
+    const activePuzzle = Date.now() >= PRIME_PATTERNS_RELEASE_UTC
+      ? primePatternsPuzzle
+      : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle);
     const characterBank = activePuzzle.bank;
     const normalizeCharacter = value => String(value).toUpperCase();
     const characterBankSet = new Set(characterBank.map(normalizeCharacter));
@@ -792,10 +814,12 @@
     const questions = activePuzzle.questions;
     const correctAnswers = activePuzzle.answers;
 
-    // An already-open tab switches to the new weekly puzzle at midnight, too.
-    // The release is selected by an absolute timestamp, not the player's time zone.
-    if (Date.now() < NEXT_PUZZLE_RELEASE_UTC) {
-      setTimeout(() => window.location.reload(), NEXT_PUZZLE_RELEASE_UTC - Date.now() + 250);
+    // Switch open tabs at the next scheduled boundary; compare absolute UTC instants.
+    // Refreshing ensures the current game picks up the new bank and answers.
+    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC]
+      .find(releaseTime => releaseTime > Date.now());
+    if (nextRelease !== undefined) {
+      setTimeout(() => window.location.reload(), nextRelease - Date.now() + 250);
     }
 
     function validatePuzzleData(bank = characterBank, answers = correctAnswers, finalRow = code) {
