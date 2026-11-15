@@ -743,6 +743,8 @@
     const NEXT_PUZZLE_RELEASE_UTC = Date.parse("2026-11-01T04:00:00Z");
     // November 8 is after the daylight-saving transition: midnight EST = 05:00 UTC.
     const PRIME_PATTERNS_RELEASE_UTC = Date.parse("2026-11-08T05:00:00Z");
+    // Nov 15 midnight in America/New_York is 05:00 UTC (EST).
+    const RHYTHM_NUMBERS_RELEASE_UTC = Date.parse("2026-11-15T05:00:00Z");
 
     const halloweenPuzzle = {
       id: "halloween-2026-10-25",
@@ -798,9 +800,29 @@
       ]
     };
 
-    const activePuzzle = Date.now() >= PRIME_PATTERNS_RELEASE_UTC
-      ? primePatternsPuzzle
-      : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle);
+    const rhythmNumbersPuzzle = {
+      id: "rhythm-numbers-2026-11-15",
+      bank: ["0","1","2","3","4","5","6","7","8","9","M","U","S","I","C","#"],
+      code: ["#","S","M","4","8","5","2"],
+      questions: [
+        "How many notes are in a major scale when both the starting note and its octave are counted?",
+        "How many semitones are there in one octave?",
+        "A concert hall has 21 rows with 17 seats in each row. How many seats are there?",
+        "A synthesizer has 12 independent switches, each either on or off. How many distinct switch configurations are possible?",
+        "What five-letter word describes the art of arranging sounds into expressive patterns?",
+        "Enter the unused character, followed by the six-character code."
+      ],
+      answers: [
+        ["8"], ["1","2"], ["3","5","7"], ["4","0","9","6"],
+        ["M","U","S","I","C"], ["#","S","M","4","8","5","2"]
+      ]
+    };
+
+    const activePuzzle = Date.now() >= RHYTHM_NUMBERS_RELEASE_UTC
+      ? rhythmNumbersPuzzle
+      : (Date.now() >= PRIME_PATTERNS_RELEASE_UTC
+        ? primePatternsPuzzle
+        : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle));
     const characterBank = activePuzzle.bank;
     const normalizeCharacter = value => String(value).toUpperCase();
     const characterBankSet = new Set(characterBank.map(normalizeCharacter));
@@ -816,7 +838,7 @@
 
     // Switch open tabs at the next scheduled boundary; compare absolute UTC instants.
     // Refreshing ensures the current game picks up the new bank and answers.
-    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC]
+    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC, RHYTHM_NUMBERS_RELEASE_UTC]
       .find(releaseTime => releaseTime > Date.now());
     if (nextRelease !== undefined) {
       setTimeout(() => window.location.reload(), nextRelease - Date.now() + 250);
