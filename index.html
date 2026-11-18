@@ -745,6 +745,8 @@
     const PRIME_PATTERNS_RELEASE_UTC = Date.parse("2026-11-08T05:00:00Z");
     // Nov 15 midnight in America/New_York is 05:00 UTC (EST).
     const RHYTHM_NUMBERS_RELEASE_UTC = Date.parse("2026-11-15T05:00:00Z");
+    // Midnight Nov 22, 2026 in New York is 05:00 UTC (EST).
+    const CALCULUS_AFTER_DARK_RELEASE_UTC = Date.parse("2026-11-22T05:00:00Z");
 
     const halloweenPuzzle = {
       id: "halloween-2026-10-25",
@@ -818,11 +820,31 @@
       ]
     };
 
-    const activePuzzle = Date.now() >= RHYTHM_NUMBERS_RELEASE_UTC
-      ? rhythmNumbersPuzzle
-      : (Date.now() >= PRIME_PATTERNS_RELEASE_UTC
-        ? primePatternsPuzzle
-        : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle));
+    const calculusAfterDarkPuzzle = {
+      id: "calculus-after-dark-2026-11-22",
+      bank: ["0","1","2","3","4","5","6","7","8","9","G","N","I","T","E","#"],
+      code: ["#","N","2","G","1","9","7"],
+      questions: [
+        "How many solutions does sin(x) = 0 have on the interval 0 ≤ x ≤ 6π, including both endpoints?",
+        "What two-character abbreviation refers to fifth-generation cellular networking?",
+        "For f(x) = x³ + 30x, calculate f′(6).",
+        "Evaluate the definite integral ∫₀⁸ 4x³ dx.",
+        "Which five-character texting abbreviation means “tonight”? Use a leading numeral in place of “to”.",
+        "Enter the unused character, followed by the six-character code."
+      ],
+      answers: [
+        ["7"], ["5","G"], ["1","3","8"], ["4","0","9","6"],
+        ["2","N","I","T","E"], ["#","N","2","G","1","9","7"]
+      ]
+    };
+
+    const activePuzzle = Date.now() >= CALCULUS_AFTER_DARK_RELEASE_UTC
+      ? calculusAfterDarkPuzzle
+      : (Date.now() >= RHYTHM_NUMBERS_RELEASE_UTC
+        ? rhythmNumbersPuzzle
+        : (Date.now() >= PRIME_PATTERNS_RELEASE_UTC
+          ? primePatternsPuzzle
+          : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle)));
     const characterBank = activePuzzle.bank;
     const normalizeCharacter = value => String(value).toUpperCase();
     const characterBankSet = new Set(characterBank.map(normalizeCharacter));
@@ -838,7 +860,7 @@
 
     // Switch open tabs at the next scheduled boundary; compare absolute UTC instants.
     // Refreshing ensures the current game picks up the new bank and answers.
-    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC, RHYTHM_NUMBERS_RELEASE_UTC]
+    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC, RHYTHM_NUMBERS_RELEASE_UTC, CALCULUS_AFTER_DARK_RELEASE_UTC]
       .find(releaseTime => releaseTime > Date.now());
     if (nextRelease !== undefined) {
       setTimeout(() => window.location.reload(), nextRelease - Date.now() + 250);
