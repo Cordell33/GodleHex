@@ -747,6 +747,8 @@
     const RHYTHM_NUMBERS_RELEASE_UTC = Date.parse("2026-11-15T05:00:00Z");
     // Midnight Nov 22, 2026 in New York is 05:00 UTC (EST).
     const CALCULUS_AFTER_DARK_RELEASE_UTC = Date.parse("2026-11-22T05:00:00Z");
+    // Nov 29 midnight Eastern Standard Time = Nov 29, 05:00 UTC.
+    const LIMITS_AND_LEGENDS_RELEASE_UTC = Date.parse("2026-11-29T05:00:00Z");
 
     const halloweenPuzzle = {
       id: "halloween-2026-10-25",
@@ -838,13 +840,33 @@
       ]
     };
 
-    const activePuzzle = Date.now() >= CALCULUS_AFTER_DARK_RELEASE_UTC
-      ? calculusAfterDarkPuzzle
-      : (Date.now() >= RHYTHM_NUMBERS_RELEASE_UTC
-        ? rhythmNumbersPuzzle
-        : (Date.now() >= PRIME_PATTERNS_RELEASE_UTC
-          ? primePatternsPuzzle
-          : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle)));
+    const limitsAndLegendsPuzzle = {
+      id: "limits-and-legends-2026-11-29",
+      bank: ["0","1","2","3","4","5","6","7","8","9","A","D","S","F","-","?"],
+      code: ["?","F","A","8","1","2","S"],
+      questions: [
+        "For f(x) = sin(3x), which is f′(x)? Enter the letter.\nA) 3cos(3x)\nB) cos(3x)\nC) −3sin(3x)\nD) 3sin(3x)",
+        "Evaluate the definite integral ∫₀³ 3x² dx.",
+        "What three-character model name identifies Nintendo’s handheld console that can display stereoscopic 3D games?",
+        "Find the determinant of this matrix:\n| 99  09 |\n| 18  89 |",
+        "What five-character designation identifies Ford’s well-known light-duty full-size pickup truck? Include the hyphen.",
+        "Enter the unused character, followed by the six-character code."
+      ],
+      answers: [
+        ["A"], ["2","7"], ["3","D","S"], ["8","6","4","9"],
+        ["F","-","1","5","0"], ["?","F","A","8","1","2","S"]
+      ]
+    };
+
+    const activePuzzle = Date.now() >= LIMITS_AND_LEGENDS_RELEASE_UTC
+      ? limitsAndLegendsPuzzle
+      : (Date.now() >= CALCULUS_AFTER_DARK_RELEASE_UTC
+        ? calculusAfterDarkPuzzle
+        : (Date.now() >= RHYTHM_NUMBERS_RELEASE_UTC
+          ? rhythmNumbersPuzzle
+          : (Date.now() >= PRIME_PATTERNS_RELEASE_UTC
+            ? primePatternsPuzzle
+            : (Date.now() >= NEXT_PUZZLE_RELEASE_UTC ? novemberPuzzle : halloweenPuzzle))));
     const characterBank = activePuzzle.bank;
     const normalizeCharacter = value => String(value).toUpperCase();
     const characterBankSet = new Set(characterBank.map(normalizeCharacter));
@@ -860,7 +882,7 @@
 
     // Switch open tabs at the next scheduled boundary; compare absolute UTC instants.
     // Refreshing ensures the current game picks up the new bank and answers.
-    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC, RHYTHM_NUMBERS_RELEASE_UTC, CALCULUS_AFTER_DARK_RELEASE_UTC]
+    const nextRelease = [NEXT_PUZZLE_RELEASE_UTC, PRIME_PATTERNS_RELEASE_UTC, RHYTHM_NUMBERS_RELEASE_UTC, CALCULUS_AFTER_DARK_RELEASE_UTC, LIMITS_AND_LEGENDS_RELEASE_UTC]
       .find(releaseTime => releaseTime > Date.now());
     if (nextRelease !== undefined) {
       setTimeout(() => window.location.reload(), nextRelease - Date.now() + 250);
